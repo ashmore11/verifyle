@@ -23,7 +23,11 @@ class APP
     
     $(document).on 'mousemove', @mousemove
 
-    @Scene = new Two( fullscreen: true, type: 'SVGRenderer' )
+    params = 
+      width: @win.w
+      height: @win.h + 100
+
+    @Scene = new Two( params, type: 'SVGRenderer' )
 
     @Scene.appendTo( @el )
 
@@ -34,12 +38,12 @@ class APP
 
   createCircles: ->
 
-    for i in [0...250]
+    for i in [0...40]
 
       circle = new Circle
       x      = Math.random() * @win.w
       y      = Math.random() * @win.h
-      radius = ( Math.random() * 30 ) + 5
+      radius = ( Math.random() * 3 ) + 2
 
       circle.makeCircle( x, y, radius )
 
@@ -47,13 +51,13 @@ class APP
 
   createLines: ->
 
-    for i in [0...6]
+    for i in [0...1]
 
       line   = new Line
       origin = @circles[ Math.floor( Math.random() * @circles.length ) ]
       points = []
 
-      for i in [0...3]
+      for j in [0...3]
         
         point = @circles[ Math.floor( Math.random() * @circles.length ) ]
         points.push point
@@ -73,12 +77,18 @@ class APP
     index  = Math.floor( Math.random() * @circles.length )
     circle = @circles[ index ]
 
+    return if circle.group.animating
+
+    circle.group.animating = true
+
     i = 0
 
     for key, ring of circle.group.children
 
       i++
       j = 0
+
+      ring.parent.animating = true
 
       tween = new TWEEN.Tween ring
 
@@ -97,6 +107,8 @@ class APP
 
                 .to( scale: 1, 3000 )
                 .easing( TWEEN.Easing.Cubic.InOut )
+                .onComplete ->
+                  circle.group.animating = false
 
               tween.start()
 
@@ -106,7 +118,7 @@ class APP
 
     @RAF = @Scene.bind 'update', ( frameCount, timeDelta ) =>
 
-      @animateScale() if frameCount % 50 is 1
+      @animateScale() if frameCount % 25 is 1
       
       circle.update( @mouse ) for circle in @circles
 
@@ -117,10 +129,6 @@ class APP
     @RAF.play()
 
 class Line
-
-  win:
-    w: $( window ).outerWidth()
-    h: $( window ).outerHeight()
 
   origin: null
   points: []
@@ -136,7 +144,7 @@ class Line
       
       line = @scene.makeLine( @origin.x, @origin.y, point.x, point.y )
 
-      line.stroke  = '#eee'
+      line.stroke  = 'rgba(255,255,255,0.5)'
       line.opacity = 1
       line.point   = point
 
@@ -176,26 +184,24 @@ class Circle
   makeCircle: ( @x, @y, @radius ) ->
 
     @group = @scene.makeGroup()
-    @delta = new Two.Vector
+    @group.animating = false
 
-    @fallSpeed = Math.random() * 3.05 + 1.05
+    @fallSpeed = Math.random() * 0.05 + 0.15
 
-    for i in [ 3..0 ] by -1
+    for i in [ 5..0 ] by -1
 
-      radius = ( i * @radius ) + @radius * 2
+      radius = ( i * @radius ) + @radius * 3
 
       ring           = @scene.makeCircle( 0, 0, radius )
-      ring.stroke    = randomColor( hue: 'monochrome', luminosity: 'light' )
-      ring.linewidth = 1
-      ring.opacity   = 1
-      ring.type      = 'ring'
+      ring.stroke    = '#eee'
+      ring.linewidth = 1.5
+      ring.opacity   = ( 0.15 * -i ) + 1
       ring.fill      = 'rgba(0,0,0,0)'
-
-      if i is 3 then ring.fill = 'black'
+      ring.type      = 'ring'
 
       ring.addTo @group
 
-    center           = @scene.makeCircle( 0, 0, @radius )
+    center           = @scene.makeCircle( 0, 0, @radius * 2 )
     center.fill      = '#eee'
     center.linewidth = 0
     center.type      = 'center'
@@ -228,19 +234,15 @@ class Circle
 
   update: ( mouse ) ->
 
-    if @x > @win.w + 50
-      x = -50
-    else if @x < -50
-      x = @win.w + 50
-    else
-      x = @x
+    if @x > @win.w + 50 then x = -50 else if @x < -50 then x = @win.w + 50 else x = @x
+    if @y > @win.h + 50 then y = -50 else y = @y
 
-    if @y > @win.h + 50
-      y = -50
+    if @y > @win.h - 25
+      @group.opacity -= 0.005
     else
-      y = @y
+      @group.opacity = 1
 
-    @x = x + ( mouse.x / 10 ) / @radius
+    @x = x + ( mouse.x / 1000 ) / @radius
     @y = y + @fallSpeed
 
     @group.translation.set( @x, @y )

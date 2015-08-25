@@ -1,5 +1,5 @@
 coffee:
-	coffee -o js/ -cw src/coffee/
+	coffee -o public/js/ -cw src/coffee/
 
 stylus:
-	stylus -w src/stylus/ --out css/
+	stylus -w src/stylus/ --out public/css/
