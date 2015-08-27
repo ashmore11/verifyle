@@ -1,5 +1,4 @@
 body {
-  height: 3000px;
   overflow-x: hidden;
   margin: 0;
   position: absolute;
@@ -7,4 +6,19 @@ body {
   left: 0;
   width: 100%;
   background-color: #1478c2;
+}
+#scene {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: -1;
+  transform: translateX(-50%);
+  visibility: hidden;
+  opacity: 0;
+}
+img {
+  display: block;
+  margin: 0 auto;
+  visibility: hidden;
+  opacity: 0;
 }

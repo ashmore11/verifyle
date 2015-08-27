@@ -1,6 +1,6 @@
-$ -> app = new APP
+$ -> new DOTS
 
-class APP
+class DOTS
 
   win:
     w: $( window ).outerWidth()
@@ -10,40 +10,56 @@ class APP
     x: 0
     y: 0
 
-  Scene: null
+  scene: null
 
   circles: []
   lines: []
 
   constructor: ->
 
-    window.APP = @
-
-    @el = document.getElementById 'scene'
+    window.DOTS = @
     
     $(document).on 'mousemove', @mousemove
+    $(window).on 'resize', @resize
 
     params = 
-      width: @win.w
+      width : @win.w
       height: @win.h + 100
 
-    @Scene = new Two( params, type: 'SVGRenderer' )
+    @scene = new Two( params, type: 'SVGRenderer' )
+    @el    = document.getElementById 'scene'
 
-    @Scene.appendTo( @el )
+    @scene.appendTo( @el )
 
     @createCircles()
-    @createLines()
+    # @createLines()
     @animateScale()
     @animateScene()
 
+    params = 
+      autoAlpha: 1
+      ease: Power1.easeInOut
+
+    TweenMax.to document.getElementsByTagName('img'), 2, params
+
+    setTimeout( =>
+
+      params = 
+        autoAlpha: 1
+        ease: Power1.easeInOut
+
+      TweenMax.to @el, 2, params
+
+    , 500 )
+
   createCircles: ->
 
-    for i in [0...40]
+    for i in [0...60]
 
       circle = new Circle
       x      = Math.random() * @win.w
       y      = Math.random() * @win.h
-      radius = ( Math.random() * 3 ) + 2
+      radius = ( Math.random() * 5 ) + 1
 
       circle.makeCircle( x, y, radius )
 
@@ -88,8 +104,6 @@ class APP
       i++
       j = 0
 
-      ring.parent.animating = true
-
       tween = new TWEEN.Tween ring
 
         .to( scale: 1.25, 1000 )
@@ -108,6 +122,7 @@ class APP
                 .to( scale: 1, 3000 )
                 .easing( TWEEN.Easing.Cubic.InOut )
                 .onComplete ->
+
                   circle.group.animating = false
 
               tween.start()
@@ -116,7 +131,7 @@ class APP
 
   animateScene: ->
 
-    @RAF = @Scene.bind 'update', ( frameCount, timeDelta ) =>
+    @RAF = @scene.bind 'update', ( frameCount, timeDelta ) =>
 
       @animateScale() if frameCount % 25 is 1
       
@@ -128,6 +143,14 @@ class APP
 
     @RAF.play()
 
+  resize: =>
+
+    @win =
+      w: $( window ).outerWidth()
+      h: $( window ).outerHeight()
+
+    @scene.width = @win.w
+
 class Line
 
   origin: null
@@ -136,7 +159,7 @@ class Line
 
   constructor: ->
 
-    @scene = window.APP.Scene
+    @scene = window.DOTS.scene
 
   makeLine: ( @origin, @points ) ->
 
@@ -179,34 +202,50 @@ class Circle
 
   constructor: ->
 
-    @scene = window.APP.Scene
+    $(window).on 'resize', @resize
+
+    @scene     = window.DOTS.scene
+    @fallSpeed = Math.random() * 0.01 + 0.125
 
   makeCircle: ( @x, @y, @radius ) ->
 
     @group = @scene.makeGroup()
     @group.animating = false
 
-    @fallSpeed = Math.random() * 0.05 + 0.15
-
-    for i in [ 5..0 ] by -1
-
-      radius = ( i * @radius ) + @radius * 3
-
-      ring           = @scene.makeCircle( 0, 0, radius )
-      ring.stroke    = '#eee'
-      ring.linewidth = 1.5
-      ring.opacity   = ( 0.15 * -i ) + 1
-      ring.fill      = 'rgba(0,0,0,0)'
-      ring.type      = 'ring'
-
-      ring.addTo @group
-
     center           = @scene.makeCircle( 0, 0, @radius * 2 )
     center.fill      = '#eee'
     center.linewidth = 0
     center.type      = 'center'
 
+    if @radius < 2
+      center.opacity = 0.5
+    else
+      center.opacity = 1
+
     center.addTo @group
+
+    for i in [ 5..0 ] by -1
+
+      if @radius < 2
+        opacity   = 0.5
+        lineWidth = 0.5
+      else
+        opacity   = ( 0.175 * -i ) + 1
+        lineWidth = 1.5
+
+      radius = ( i * @radius ) + @radius * 3
+
+      ring           = @scene.makeCircle( 0, 0, radius )
+      ring.stroke    = '#eee'
+      ring.linewidth = lineWidth
+      ring.opacity   = opacity
+      ring.fill      = 'rgba(0,0,0,0)'
+      ring.type      = 'ring'
+
+      ring.addTo @group
+
+    @group.opacity = 0.1
+    
 
     @group.translation.set( @x, @y )
 
@@ -242,7 +281,15 @@ class Circle
     else
       @group.opacity = 1
 
-    @x = x + ( mouse.x / 1000 ) / @radius
+    @x = x + ( mouse.x / 3000 ) / @radius
     @y = y + @fallSpeed
 
     @group.translation.set( @x, @y )
+
+  resize: =>
+
+    @win =
+      w: $( window ).outerWidth()
+      h: $( window ).outerHeight()
+
+    @scene.width = @win.w
