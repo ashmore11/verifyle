@@ -18,6 +18,12 @@ class APP
 
     TweenMax.to document.getElementsByTagName('img'), 2, params
 
+    params = 
+      autoAlpha: 1
+      ease: Power1.easeInOut
+
+    TweenMax.to @encrypted.el, 2, params if @encrypted
+
     setTimeout( =>
 
       params = 

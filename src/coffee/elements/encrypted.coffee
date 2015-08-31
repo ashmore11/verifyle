@@ -1,37 +1,44 @@
 module.exports = class ENCRYPTED
 
-  scene: null
+  scene  : null
+  radius : 100
+
+  params:
+    type      : 'SVGRenderer'
+    width     : 500
+    height    : 500
+    autostart : true
 
   constructor: ->
 
-    params = 
-      width : 500
-      height: 500
+    @$el = $ '#encryption'
 
-    @scene = new Two params, type: 'SVGRenderer'
+    @createScene()
+    @makeCircle()
+    @importShape()
+
+  createScene: ->
+
+    @scene = new Two @params
     @el    = document.getElementById 'encryption'
-    @$el   = $ '#encryption'
 
     @scene.appendTo( @el )
 
-    @makeCircle 100
-    @importShape()
+    @scene.bind 'update', @update
 
-    @update()
-
-  makeCircle: ( radius ) ->
+  makeCircle: ->
 
     @group = @scene.makeGroup()
     @group.animating = false
 
-    center           = @scene.makeCircle( 0, 0, radius )
+    center           = @scene.makeCircle( 0, 0, @radius )
     center.fill      = '#eee'
     center.linewidth = 0
     center.type      = 'center'
 
     center.addTo @group
 
-    j = radius
+    j = @radius
 
     for i in [ 5..0 ] by -1
 
@@ -55,6 +62,19 @@ module.exports = class ENCRYPTED
 
     @group.translation.set( @$el.width() / 2, @$el.height() / 2 )
 
+    i = 0
+
+    for key, object of @group.children
+
+      i++
+
+      params = 
+        rotation : 180
+        delay    : i * 100
+        ease     : Power1.easeInOut
+
+      TweenMax.to object, 5, params
+
   importShape: ->
 
     el = document.getElementById('assets').children[0]
@@ -65,12 +85,36 @@ module.exports = class ENCRYPTED
 
     @complexShape.opacity = 0.8
 
-  update: ->
+    @displaceVertices()
 
-    @RAF = @scene.bind 'update', ( frameCount, timeDelta ) =>
+  displaceVertices: ->
 
-      @complexShape.rotation += 0.001
-      
-      @complexShape.scale = 0.02 * Math.sin( frameCount / 20 ) + 0.54
+    for key, child of @complexShape.children
 
-    @RAF.play()
+      for key, object of child.children
+
+        x = ( Math.random() * 200 ) - 100
+        y = ( Math.random() * 200 ) - 100
+
+        object.translation.x = x
+        object.translation.y = y
+        object.opacity       = 0
+
+        params = 
+          x    : 0
+          y    : 0
+          ease : Power1.easeInOut
+
+        TweenMax.to object.translation, 5, params
+
+        params = 
+          opacity : 1
+          ease    : Power1.easeInOut
+
+        TweenMax.to object, 5, params
+
+  update: ( frameCount, timeDelta ) =>
+
+    @complexShape.rotation += 0.001
+    
+    @complexShape.scale = 0.02 * Math.sin( frameCount / 20 ) + 0.54

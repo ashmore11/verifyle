@@ -17,6 +17,7 @@ module.exports =
 			elements    : __dirname + '/src/coffee/elements'
 			utils       : __dirname + '/src/coffee/utils'
 			helpers     : __dirname + '/src/coffee/helpers'
+			settings    : __dirname + '/src/coffee/settings.coffee'
 
 	node:
 		fs: 'empty'

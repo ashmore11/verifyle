@@ -1,19 +1,18 @@
-win   = require 'utils/window'
-mouse = require 'utils/mouse'
+settings = require 'settings'
+win      = require 'utils/window'
+mouse    = require 'utils/mouse'
 
 module.exports = class Circle
 
   x: 0
   y: 0
   a: 0
-  
-  fallSpeed : 0
-  infinite  : false
-  group     : null
 
   constructor: ( @scene, @x, @y, @radius ) ->
 
     @fallSpeed = Math.random() * ( @radius / 10 )
+
+    # @fallSpeed = @radius + settings.fallSpeed
 
     @group = @scene.makeGroup()
     @group.animating = false
@@ -23,7 +22,7 @@ module.exports = class Circle
     center.linewidth = 0
     center.type      = 'center'
 
-    if @radius < 2
+    if @radius < 3
       center.opacity = 0.5
     else
       center.opacity = 1
@@ -75,13 +74,10 @@ module.exports = class Circle
     else
       @group.opacity = 1
 
-    if @infinite
-    
-      @x = x + ( mouse.x / win.width ) * @radius
-    
+    if settings.infinite
+      @x = x + ( mouse.x / settings.sensitivity ) * @radius
     else
-      
-      mouseNorm  = mouse.x / ( win.width / 2 )
+      mouseNorm  = mouse.x / ( settings.sensitivity )
       @a        += ( mouseNorm - @a ) / 50
       @x        += ( mouseNorm - @a ) * @radius
 

@@ -1,7 +1,8 @@
-dat    = require 'dat-gui'
-win    = require 'utils/window'
-Circle = require 'helpers/circle'
-Line   = require 'helpers/line'
+dat      = require 'dat-gui'
+settings = require 'settings'
+win      = require 'utils/window'
+Circle   = require 'helpers/circle'
+Line     = require 'helpers/line'
 
 module.exports = class DOTS
 
@@ -9,9 +10,6 @@ module.exports = class DOTS
   el      : null
   circles : []
   lines   : []
-  infinite: false
-  fallSpeed: 0
-  scaleTimer: 10
 
   constructor: ->
     
@@ -22,23 +20,25 @@ module.exports = class DOTS
     @createCircles()
     # @createLines()
     @createGUI()
-    
-    @scene.bind( 'update', @update ).play()
 
   createScene: ->
 
     params = 
-      width : win.width
-      height: win.height + 100
+      type      : 'SVGRenderer'
+      width     : win.width
+      height    : win.height + 100
+      autostart : true
 
-    @scene = new Two params, type: 'SVGRenderer'
+    @scene = new Two params
     @el    = document.getElementById 'dots'
 
     @scene.appendTo( @el )
 
+    @scene.bind 'update', @update
+
   createCircles: ->
 
-    for i in [0...60]
+    for i in [0...100]
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
@@ -110,13 +110,29 @@ module.exports = class DOTS
 
       tween.start()
 
+  update: ( frameCount, timeDelta ) =>
+
+    if frameCount % settings.scaleTimer is 1
+      
+      @animateScale()
+    
+    circle.update() for circle in @circles
+    lines.update()  for lines  in @lines
+
+    TWEEN.update()
+
+  resize: =>
+
+    @scene.width = win.width
+
   createGUI: ->
 
     gui = new dat.GUI
 
-    infinite   = gui.add( @, 'infinite' )
-    fallSpeed  = gui.add( @, 'fallSpeed',  0, 10 )
-    scaleTimer = gui.add( @, 'scaleTimer', 0, 50 )
+    infinite    = gui.add( settings, 'infinite' )
+    fallSpeed   = gui.add( settings, 'fallSpeed',  0, 3 )
+    scaleTimer  = gui.add( settings, 'scaleTimer', 2, 50 )
+    sensitivity = gui.add( settings, 'sensitivity', 500, 1500 )
 
     infinite.onChange ( change ) =>
 
@@ -136,17 +152,8 @@ module.exports = class DOTS
 
       @scaleTimer = Math.floor( change )
 
-  update: ( frameCount, timeDelta ) =>
+    sensitivity.onChange ( change ) =>
 
-    if frameCount % @scaleTimer is 1
-      
-      @animateScale()
-    
-    circle.update() for circle in @circles
-    lines.update()  for lines  in @lines
+      for circle in @circles
 
-    TWEEN.update()
-
-  resize: =>
-
-    @scene.width = win.width
+        circle.sensitivity = change
