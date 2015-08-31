@@ -14,11 +14,9 @@ module.exports =
 	resolve:
 		extensions: [ '', '.js', '.coffee' ]
 		alias:
+			elements    : __dirname + '/src/coffee/elements'
 			utils       : __dirname + '/src/coffee/utils'
-			models      : __dirname + '/src/coffee/models'
-			views       : __dirname + '/src/coffee/views'
-			controllers : __dirname + '/src/coffee/controllers'
-			templates   : __dirname + '/src/templates'
+			helpers     : __dirname + '/src/coffee/helpers'
 
 	node:
 		fs: 'empty'

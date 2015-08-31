@@ -1,12 +1,12 @@
-Dots      = require './elements/dots'
-Encrypted = require './elements/encrypted'
+Dots      = require 'elements/dots'
+Encrypted = require 'elements/encrypted'
 
 class APP
 
 	constructor: ->
 
-		# @dots      = new Dots
-		@encrypted = new Encrypted
+		@dots      = new Dots
+		# @encrypted = new Encrypted
 
 		@transitionIn()
 

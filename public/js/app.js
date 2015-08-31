@@ -48,11 +48,11 @@
 
 	Dots = __webpack_require__(1);
 
-	Encrypted = __webpack_require__(4);
+	Encrypted = __webpack_require__(7);
 
 	APP = (function() {
 	  function APP() {
-	    this.encrypted = new Encrypted;
+	    this.dots = new Dots;
 	    this.transitionIn();
 	  }
 
@@ -87,24 +87,16 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Circle, DOTS, Line,
+	var Circle, DOTS, Line, win,
 	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	Circle = __webpack_require__(2);
+	win = __webpack_require__(2);
 
-	Line = __webpack_require__(3);
+	Circle = __webpack_require__(4);
+
+	Line = __webpack_require__(6);
 
 	module.exports = DOTS = (function() {
-	  DOTS.prototype.win = {
-	    w: $(window).outerWidth(),
-	    h: $(window).outerHeight()
-	  };
-
-	  DOTS.prototype.mouse = {
-	    x: 0,
-	    y: 0
-	  };
-
 	  DOTS.prototype.scene = null;
 
 	  DOTS.prototype.el = null;
@@ -115,31 +107,33 @@
 
 	  function DOTS() {
 	    this.resize = __bind(this.resize, this);
-	    this.mousemove = __bind(this.mousemove, this);
+	    this.update = __bind(this.update, this);
+	    win.on('resize', this.resize);
+	    this.createScene();
+	    this.createCircles();
+	    this.scene.bind('update', this.update).play();
+	  }
+
+	  DOTS.prototype.createScene = function() {
 	    var params;
-	    window.DOTS = this;
-	    $(document).on('mousemove', this.mousemove);
-	    $(window).on('resize', this.resize);
 	    params = {
-	      width: this.win.w,
-	      height: this.win.h + 100
+	      width: win.width,
+	      height: win.height + 100
 	    };
 	    this.scene = new Two(params, {
 	      type: 'SVGRenderer'
 	    });
 	    this.el = document.getElementById('dots');
-	    this.scene.appendTo(this.el);
-	    this.createCircles();
-	    this.animateScene();
-	  }
+	    return this.scene.appendTo(this.el);
+	  };
 
 	  DOTS.prototype.createCircles = function() {
 	    var circle, i, radius, x, y, _i, _results;
 	    _results = [];
 	    for (i = _i = 0; _i < 60; i = ++_i) {
-	      x = Math.random() * this.win.w;
-	      y = Math.random() * this.win.h;
-	      radius = (Math.random() * 5) + 1;
+	      x = Math.random() * win.width;
+	      y = Math.random() * win.height;
+	      radius = (i % 6) + 1;
 	      circle = new Circle(this.scene, x, y, radius);
 	      _results.push(this.circles.push(circle));
 	    }
@@ -162,13 +156,6 @@
 	    return _results;
 	  };
 
-	  DOTS.prototype.mousemove = function(event) {
-	    return this.mouse = {
-	      x: event.pageX - (this.win.w / 2),
-	      y: event.pageY - (this.win.h / 2)
-	    };
-	  };
-
 	  DOTS.prototype.animateScale = function() {
 	    var circle, i, index, j, key, ring, tween, _ref, _results;
 	    index = Math.floor(Math.random() * this.circles.length);
@@ -187,17 +174,21 @@
 	      tween = new TWEEN.Tween(ring).to({
 	        scale: 1.25
 	      }, 1000).delay(i * 100).easing(TWEEN.Easing.Cubic.Out).onComplete(function() {
-	        var _ref1, _results1;
+	        var k, _ref1, _results1;
 	        j++;
 	        if (j === 5) {
 	          _ref1 = circle.group.children;
 	          _results1 = [];
 	          for (key in _ref1) {
 	            ring = _ref1[key];
+	            k = 0;
 	            tween = new TWEEN.Tween(ring).to({
 	              scale: 1
 	            }, 3000).easing(TWEEN.Easing.Cubic.InOut).onComplete(function() {
-	              return circle.group.animating = false;
+	              k++;
+	              if (k === 5) {
+	                return circle.group.animating = false;
+	              }
 	            });
 	            _results1.push(tween.start());
 	          }
@@ -209,32 +200,24 @@
 	    return _results;
 	  };
 
-	  DOTS.prototype.animateScene = function() {
-	    this.RAF = this.scene.bind('update', (function(_this) {
-	      return function(frameCount, timeDelta) {
-	        var circle, lines, _i, _j, _len, _len1, _ref, _ref1;
-	        _ref = _this.circles;
-	        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	          circle = _ref[_i];
-	          circle.update(_this.mouse);
-	        }
-	        _ref1 = _this.lines;
-	        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-	          lines = _ref1[_j];
-	          lines.update();
-	        }
-	        return TWEEN.update();
-	      };
-	    })(this));
-	    return this.RAF.play();
+	  DOTS.prototype.update = function(frameCount, timeDelta) {
+	    var circle, lines, _i, _j, _len, _len1, _ref, _ref1;
+	    this.animateScale();
+	    _ref = this.circles;
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      circle = _ref[_i];
+	      circle.update();
+	    }
+	    _ref1 = this.lines;
+	    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+	      lines = _ref1[_j];
+	      lines.update();
+	    }
+	    return TWEEN.update();
 	  };
 
 	  DOTS.prototype.resize = function() {
-	    this.win = {
-	      w: $(window).outerWidth(),
-	      h: $(window).outerHeight()
-	    };
-	    return this.scene.width = this.win.w;
+	    return this.scene.width = win.width;
 	  };
 
 	  return DOTS;
@@ -244,24 +227,154 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	var Circle,
+	var Window, happens,
 	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-	module.exports = Circle = (function() {
-	  Circle.prototype.win = {
-	    w: $(window).outerWidth(),
-	    h: $(window).outerHeight()
+	happens = __webpack_require__(3);
+
+	Window = (function() {
+	  Window.prototype.window = $(window);
+
+	  Window.prototype.width = 0;
+
+	  Window.prototype.height = 0;
+
+	  function Window() {
+	    this.resize = __bind(this.resize, this);
+	    happens(this);
+	    this.window.on('resize', this.resize);
+	    this.resize();
+	  }
+
+	  Window.prototype.resize = function() {
+	    this.width = this.window.width();
+	    this.height = this.window.height();
+	    return this.emit('resize');
 	  };
 
+	  return Window;
+
+	})();
+
+	module.exports = new Window;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	/**
+	 * Module constructor
+	 * @param  {Object} target Target object to extends methods and properties into
+	 * @return {Object}        Target after with extended methods and properties
+	 */
+	module.exports = function(target) {
+	  target = target || {};
+	  for(var prop in Happens)
+	    target[prop] = Happens[prop];
+	  return target;
+	};
+
+
+
+	/**
+	 * Class Happens
+	 * @type {Object}
+	 */
+	var Happens = {
+
+	  /**
+	   * Initializes event
+	   * @param  {String} event Event name to initialize
+	   * @return {Array}        Initialized event pool
+	   */
+	  __init: function(event) {
+	    var tmp = this.__listeners || (this.__listeners = []);
+	    return tmp[event] || (tmp[event] = []);
+	  },
+
+	  /**
+	   * Adds listener
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  on: function(event, fn) {
+	    validate(fn);
+	    this.__init(event).push(fn);
+	  },
+
+	  /**
+	   * Removes listener
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  off: function(event, fn) {
+	    var pool = this.__init(event);
+	    pool.splice(pool.indexOf(fn), 1);
+	  },
+
+	  /**
+	   * Add listener the fires once and auto-removes itself
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  once: function(event, fn) {
+	    validate(fn);
+	    var self = this, wrapper = function() {
+	      self.off(event, wrapper);
+	      fn.apply(this, arguments);
+	    };
+	    this.on(event, wrapper );
+	  },
+
+	  /**
+	   * Emit some event
+	   * @param  {String} event Event name -- subsequent params after `event` will
+	   * be passed along to the event's handlers
+	   */
+	  emit: function(event /*, arg1, arg2 */ ) {
+	    var i, pool = this.__init(event).slice(0);
+	    for(i in pool)
+	      pool[i].apply(this, [].slice.call(arguments, 1));
+	  }
+	};
+
+
+
+	/**
+	 * Validates if a function exists and is an instanceof Function, and throws
+	 * an error if needed
+	 * @param  {Function} fn Function to validate
+	 */
+	function validate(fn) {
+	  if(!(fn && fn instanceof Function))
+	    throw new Error(fn + ' is not a Function');
+	}
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Circle, mouse, win;
+
+	win = __webpack_require__(2);
+
+	mouse = __webpack_require__(5);
+
+	module.exports = Circle = (function() {
 	  Circle.prototype.x = 0;
 
 	  Circle.prototype.y = 0;
 
-	  Circle.prototype.group = null;
+	  Circle.prototype.a = 0;
 
 	  Circle.prototype.fallSpeed = 0;
+
+	  Circle.prototype.infinite = false;
+
+	  Circle.prototype.group = null;
 
 	  function Circle(scene, x, y, radius) {
 	    var center, i, lineWidth, opacity, ring, _i;
@@ -269,10 +382,7 @@
 	    this.x = x;
 	    this.y = y;
 	    this.radius = radius;
-	    this.resize = __bind(this.resize, this);
-	    $(window).on('resize', this.resize);
-	    this.scene = window.DOTS.scene;
-	    this.fallSpeed = Math.random() * 0.01 + 0.125;
+	    this.fallSpeed = Math.random() * (this.radius / 10);
 	    this.group = this.scene.makeGroup();
 	    this.group.animating = false;
 	    center = this.scene.makeCircle(0, 0, this.radius * 2);
@@ -290,8 +400,11 @@
 	        opacity = 0.5;
 	        lineWidth = 0.5;
 	      } else {
-	        opacity = (0.175 * -i) + 1;
+	        opacity = (Math.random() * 0.5) + 0.25;
 	        lineWidth = 1.5;
+	      }
+	      if (i === 5) {
+	        opacity = 0.25;
 	      }
 	      radius = (i * this.radius) + this.radius * 3;
 	      ring = this.scene.makeCircle(0, 0, radius);
@@ -306,53 +419,34 @@
 	    this.group.translation.set(this.x, this.y);
 	  }
 
-	  Circle.prototype.randomRing = function() {
-	    var ids, index, key, ring;
-	    ids = [];
-	    for (key in this.group.children) {
-	      ids.push(key);
-	    }
-	    index = Math.floor(Math.random() * ids.length);
-	    if (index === 0) {
-	      index = index + 1;
-	    }
-	    if (index === ids.length - 1) {
-	      index = index - 1;
-	    }
-	    ring = this.group.children[ids[index]];
-	    return ring;
-	  };
-
-	  Circle.prototype.update = function(mouse) {
-	    var x, y;
-	    if (this.x > this.win.w + 50) {
+	  Circle.prototype.update = function() {
+	    var mouseNorm, x, y;
+	    if (this.x > win.width + 50) {
 	      x = -50;
 	    } else if (this.x < -50) {
-	      x = this.win.w + 50;
+	      x = win.width + 50;
 	    } else {
 	      x = this.x;
 	    }
-	    if (this.y > this.win.h + 50) {
+	    if (this.y > win.height + 50) {
 	      y = -50;
 	    } else {
 	      y = this.y;
 	    }
-	    if (this.y > this.win.h - 25) {
+	    if (this.y > win.height - 25) {
 	      this.group.opacity -= 0.005;
 	    } else {
 	      this.group.opacity = 1;
 	    }
-	    this.x = x + (mouse.x / 3000) / this.radius;
+	    if (this.infinite) {
+	      this.x = x + (mouse.x / win.width) * this.radius;
+	    } else {
+	      mouseNorm = mouse.x / (win.width / 2);
+	      this.a += (mouseNorm - this.a) / 50;
+	      this.x += (mouseNorm - this.a) * this.radius;
+	    }
 	    this.y = y + this.fallSpeed;
 	    return this.group.translation.set(this.x, this.y);
-	  };
-
-	  Circle.prototype.resize = function() {
-	    this.win = {
-	      w: $(window).outerWidth(),
-	      h: $(window).outerHeight()
-	    };
-	    return this.scene.width = this.win.w;
 	  };
 
 	  return Circle;
@@ -361,7 +455,42 @@
 
 
 /***/ },
-/* 3 */
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Mouse, happens,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	happens = __webpack_require__(3);
+
+	Mouse = (function() {
+	  Mouse.prototype.doc = $(document);
+
+	  Mouse.prototype.x = 0;
+
+	  Mouse.prototype.y = 0;
+
+	  function Mouse() {
+	    this.mousemove = __bind(this.mousemove, this);
+	    happens(this);
+	    this.doc.on('mousemove', this.mousemove);
+	  }
+
+	  Mouse.prototype.mousemove = function(event) {
+	    this.x = event.pageX - ($(window).width() / 2);
+	    this.y = event.pageY - ($(window).height() / 2);
+	    return this.emit('move');
+	  };
+
+	  return Mouse;
+
+	})();
+
+	module.exports = new Mouse;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	var Line;
@@ -412,7 +541,7 @@
 
 
 /***/ },
-/* 4 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var ENCRYPTED;

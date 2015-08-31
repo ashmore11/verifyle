@@ -1,49 +1,43 @@
-Circle = require './circle'
-Line   = require './line'
+win    = require 'utils/window'
+Circle = require 'helpers/circle'
+Line   = require 'helpers/line'
 
 module.exports = class DOTS
 
-  win:
-    w: $( window ).outerWidth()
-    h: $( window ).outerHeight()
-
-  mouse:
-    x: 0
-    y: 0
-
-  scene: null
-  el   : null
-
-  circles: []
-  lines: []
+  scene   : null
+  el      : null
+  circles : []
+  lines   : []
 
   constructor: ->
-
-    window.DOTS = @
     
-    $(document).on 'mousemove', @mousemove
-    $(window).on 'resize', @resize
+    win.on 'resize', @resize
+
+    @createScene()
+
+    @createCircles()
+    # @createLines()
+    
+    @scene.bind( 'update', @update ).play()
+
+  createScene: ->
 
     params = 
-      width : @win.w
-      height: @win.h + 100
+      width : win.width
+      height: win.height + 100
 
     @scene = new Two params, type: 'SVGRenderer'
     @el    = document.getElementById 'dots'
 
     @scene.appendTo( @el )
 
-    @createCircles()
-    # @createLines()
-    @animateScene()
-
   createCircles: ->
 
     for i in [0...60]
       
-      x      = Math.random() * @win.w
-      y      = Math.random() * @win.h
-      radius = ( Math.random() * 5 ) + 1
+      x      = Math.random() * win.width
+      y      = Math.random() * win.height
+      radius = ( i % 6 ) + 1
       circle = new Circle( @scene, x, y, radius )
 
       @circles.push circle
@@ -63,12 +57,6 @@ module.exports = class DOTS
       line = new Line @scene, origin, points
       
       @lines.push line
-
-  mousemove: ( event ) =>
-
-    @mouse =
-      x: ( event.pageX - ( @win.w / 2 ) )
-      y: ( event.pageY - ( @win.h / 2 ) )
 
   animateScale: ->
 
@@ -99,42 +87,33 @@ module.exports = class DOTS
 
             for key, ring of circle.group.children
 
+              k = 0
+
               tween = new TWEEN.Tween ring
 
                 .to( scale: 1, 3000 )
                 .easing( TWEEN.Easing.Cubic.InOut )
                 .onComplete ->
 
-                  circle.group.animating = false
+                  k++
+
+                  if k is 5
+
+                    circle.group.animating = false
 
               tween.start()
 
       tween.start()
 
-  animateScene: ->
+  update: ( frameCount, timeDelta ) =>
 
-    @RAF = @scene.bind 'update', ( frameCount, timeDelta ) =>
+    @animateScale()
+    
+    circle.update() for circle in @circles
+    lines.update()  for lines  in @lines
 
-      # if frameCount % 25 is 1
-
-      #   @animateScale()
-      
-      for circle in @circles
-
-        circle.update( @mouse )
-
-      for lines in @lines
-
-        lines.update()
-
-      TWEEN.update()
-
-    @RAF.play()
+    TWEEN.update()
 
   resize: =>
 
-    @win =
-      w: $( window ).outerWidth()
-      h: $( window ).outerHeight()
-
-    @scene.width = @win.w
+    @scene.width = win.width
