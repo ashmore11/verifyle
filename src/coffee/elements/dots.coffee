@@ -1,3 +1,4 @@
+dat    = require 'dat-gui'
 win    = require 'utils/window'
 Circle = require 'helpers/circle'
 Line   = require 'helpers/line'
@@ -8,6 +9,9 @@ module.exports = class DOTS
   el      : null
   circles : []
   lines   : []
+  infinite: false
+  fallSpeed: 0
+  scaleTimer: 10
 
   constructor: ->
     
@@ -17,6 +21,7 @@ module.exports = class DOTS
 
     @createCircles()
     # @createLines()
+    @createGUI()
     
     @scene.bind( 'update', @update ).play()
 
@@ -105,9 +110,37 @@ module.exports = class DOTS
 
       tween.start()
 
+  createGUI: ->
+
+    gui = new dat.GUI
+
+    infinite   = gui.add( @, 'infinite' )
+    fallSpeed  = gui.add( @, 'fallSpeed',  0, 10 )
+    scaleTimer = gui.add( @, 'scaleTimer', 0, 50 )
+
+    infinite.onChange ( change ) =>
+
+      for circle in @circles
+
+        circle.infinite = change
+
+    fallSpeed.onChange ( change ) =>
+
+      for circle in @circles
+
+        speed = Math.random() * change
+
+        circle.fallSpeed = speed
+
+    scaleTimer.onChange ( change ) =>
+
+      @scaleTimer = Math.floor( change )
+
   update: ( frameCount, timeDelta ) =>
 
-    @animateScale()
+    if frameCount % @scaleTimer is 1
+      
+      @animateScale()
     
     circle.update() for circle in @circles
     lines.update()  for lines  in @lines
