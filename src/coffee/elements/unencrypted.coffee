@@ -27,12 +27,11 @@ module.exports = class UNENCRYPTED
 
     @scene = new Two @params
     @el    = document.getElementById 'unencrypted'
+    @group = @scene.makeGroup()
 
     @scene.appendTo( @el )
 
     @scene.bind 'update', @update
-
-    @group = @scene.makeGroup()
 
     @group.translation.set( @$el.width() / 2, @$el.height() / 2 )
 
@@ -43,6 +42,7 @@ module.exports = class UNENCRYPTED
     ring.fill      = 'rgba(0,0,0,0)'
     ring.stroke    = '#000'
     ring.linewidth = 3
+    ring.type      = 'ring'
 
     ring.addTo( @group ).center()
 
@@ -70,13 +70,10 @@ module.exports = class UNENCRYPTED
 
     for key, object of @group.children
 
-      return unless object.type
+      if object.type is 'evil-dot'
 
-      x = object.translation.x
-      y = object.translation.y
-
-      object.translation.x += 1
-      object.translation.y += 1
+        object.translation.x += Math.random() - 0.5
+        object.translation.y += Math.random() - 0.5
 
     @stats.end()
 

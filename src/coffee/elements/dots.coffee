@@ -11,6 +11,7 @@ module.exports = class DOTS
   el      : null
   circles : []
   lines   : []
+  radii   : [6,4,3,2,2,1]
 
   constructor: ->
     
@@ -49,7 +50,7 @@ module.exports = class DOTS
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
-      radius = ( i % 6 ) + 1
+      radius = @radii[ i % 6 ]
       circle = new Circle( @scene, x, y, radius )
 
       @circles.push circle

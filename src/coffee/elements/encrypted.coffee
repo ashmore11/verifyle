@@ -20,7 +20,7 @@ module.exports = class ENCRYPTED
   createScene: ->
 
     @scene = new Two @params
-    @el    = document.getElementById 'encryption'
+    @el    = document.getElementById 'encrypted'
 
     @scene.appendTo( @el )
 

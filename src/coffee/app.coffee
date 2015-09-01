@@ -6,8 +6,8 @@ class APP
 
   constructor: ->
 
-    # @dots      = new Dots
-    # @encrypted = new Encrypted
+    @dots      = new Dots
+    @encrypted = new Encrypted
     @unencrypted = new Unencrypted
 
     @transitionIn()

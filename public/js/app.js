@@ -54,6 +54,8 @@
 
 	APP = (function() {
 	  function APP() {
+	    this.dots = new Dots;
+	    this.encrypted = new Encrypted;
 	    this.unencrypted = new Unencrypted;
 	    this.transitionIn();
 	  }
@@ -120,6 +122,8 @@
 
 	  DOTS.prototype.lines = [];
 
+	  DOTS.prototype.radii = [6, 4, 3, 2, 2, 1];
+
 	  function DOTS() {
 	    this.resize = __bind(this.resize, this);
 	    this.update = __bind(this.update, this);
@@ -155,7 +159,7 @@
 	    for (i = _i = 0; _i < 100; i = ++_i) {
 	      x = Math.random() * win.width;
 	      y = Math.random() * win.height;
-	      radius = (i % 6) + 1;
+	      radius = this.radii[i % 6];
 	      circle = new Circle(this.scene, x, y, radius);
 	      _results.push(this.circles.push(circle));
 	    }
@@ -5107,7 +5111,7 @@
 
 	  ENCRYPTED.prototype.createScene = function() {
 	    this.scene = new Two(this.params);
-	    this.el = document.getElementById('encryption');
+	    this.el = document.getElementById('encrypted');
 	    this.scene.appendTo(this.el);
 	    return this.scene.bind('update', this.update);
 	  };
@@ -5246,9 +5250,9 @@
 	  UNENCRYPTED.prototype.createScene = function() {
 	    this.scene = new Two(this.params);
 	    this.el = document.getElementById('unencrypted');
+	    this.group = this.scene.makeGroup();
 	    this.scene.appendTo(this.el);
 	    this.scene.bind('update', this.update);
-	    this.group = this.scene.makeGroup();
 	    return this.group.translation.set(this.$el.width() / 2, this.$el.height() / 2);
 	  };
 
@@ -5258,6 +5262,7 @@
 	    ring.fill = 'rgba(0,0,0,0)';
 	    ring.stroke = '#000';
 	    ring.linewidth = 3;
+	    ring.type = 'ring';
 	    return ring.addTo(this.group).center();
 	  };
 
@@ -5279,18 +5284,15 @@
 	  };
 
 	  UNENCRYPTED.prototype.update = function(frameCount, timeDelta) {
-	    var key, object, x, y, _ref;
+	    var key, object, _ref;
 	    this.stats.begin();
 	    _ref = this.group.children;
 	    for (key in _ref) {
 	      object = _ref[key];
-	      if (!object.type) {
-	        return;
+	      if (object.type === 'evil-dot') {
+	        object.translation.x += Math.random() - 0.5;
+	        object.translation.y += Math.random() - 0.5;
 	      }
-	      x = object.translation.x;
-	      y = object.translation.y;
-	      object.translation.x += 1;
-	      object.translation.y += 1;
 	    }
 	    return this.stats.end();
 	  };
