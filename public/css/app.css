@@ -16,13 +16,19 @@ body {
   visibility: hidden;
   opacity: 0;
 }
-#encryption {
+#encrypted {
   position: absolute;
   top: 200px;
   left: 50px;
   z-index: -1;
   visibility: hidden;
   opacity: 0;
+}
+#unencrypted {
+  position: absolute;
+  top: 200px;
+  right: 50px;
+  z-index: -1;
 }
 img {
   display: block;

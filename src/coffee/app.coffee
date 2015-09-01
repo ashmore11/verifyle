@@ -1,18 +1,20 @@
-Dots      = require 'elements/dots'
-Encrypted = require 'elements/encrypted'
+Dots        = require 'elements/dots'
+Encrypted   = require 'elements/encrypted'
+Unencrypted = require 'elements/unencrypted'
 
 class APP
 
-	constructor: ->
+  constructor: ->
 
-		@dots      = new Dots
-		# @encrypted = new Encrypted
+    # @dots      = new Dots
+    # @encrypted = new Encrypted
+    @unencrypted = new Unencrypted
 
-		@transitionIn()
+    @transitionIn()
 
-	transitionIn: ->
+  transitionIn: ->
 
-		params = 
+    params = 
       autoAlpha: 1
       ease: Power1.easeInOut
 

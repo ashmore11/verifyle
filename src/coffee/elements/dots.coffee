@@ -1,3 +1,4 @@
+Stats    = require 'stats-js'
 dat      = require 'dat-gui'
 settings = require 'settings'
 win      = require 'utils/window'
@@ -20,11 +21,17 @@ module.exports = class DOTS
     @createCircles()
     # @createLines()
     @createGUI()
+    @createStats()
 
   createScene: ->
 
+    types =
+      webgl  : 'WebGLRenderer'
+      svg    : 'SVGRenderer'
+      canvas : 'CanvasRenderer'
+
     params = 
-      type      : 'SVGRenderer'
+      type      : types.svg
       width     : win.width
       height    : win.height + 100
       autostart : true
@@ -112,6 +119,8 @@ module.exports = class DOTS
 
   update: ( frameCount, timeDelta ) =>
 
+    @stats.begin()
+
     if frameCount % settings.scaleTimer is 1
       
       @animateScale()
@@ -120,6 +129,8 @@ module.exports = class DOTS
     lines.update()  for lines  in @lines
 
     TWEEN.update()
+
+    @stats.end()
 
   resize: =>
 
@@ -157,3 +168,14 @@ module.exports = class DOTS
       for circle in @circles
 
         circle.sensitivity = change
+
+  createStats: ->
+
+    @stats = new Stats
+    @stats.setMode( 2 )
+     
+    @stats.domElement.style.position = 'absolute'
+    @stats.domElement.style.left = '5px'
+    @stats.domElement.style.top = '5px'
+     
+    document.body.appendChild( @stats.domElement )

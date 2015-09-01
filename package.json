@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "dat-gui": "^0.5.0",
-    "happens": "^0.5.0"
+    "happens": "^0.5.0",
+    "stats-js": "^1.0.0-alpha1"
   },
   "devDependencies": {
     "coffee-loader": "^0.7.2",
