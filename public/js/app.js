@@ -54,8 +54,6 @@
 
 	APP = (function() {
 	  function APP() {
-	    this.dots = new Dots;
-	    this.encrypted = new Encrypted;
 	    this.unencrypted = new Unencrypted;
 	    this.transitionIn();
 	  }
@@ -5236,6 +5234,8 @@
 	    autostart: true
 	  };
 
+	  UNENCRYPTED.prototype.count = 300;
+
 	  UNENCRYPTED.prototype.radius = 200;
 
 	  function UNENCRYPTED() {
@@ -5257,24 +5257,25 @@
 	  };
 
 	  UNENCRYPTED.prototype.bigRing = function() {
-	    var ring;
-	    ring = this.scene.makeCircle(0, 0, this.radius).center();
-	    ring.fill = 'rgba(0,0,0,0)';
-	    ring.stroke = '#000';
-	    ring.linewidth = 3;
-	    ring.type = 'ring';
-	    return ring.addTo(this.group).center();
+	    this.ring = this.scene.makeCircle(0, 0, this.radius).center();
+	    this.ring.fill = 'rgba(0,0,0,0)';
+	    this.ring.stroke = '#000';
+	    this.ring.linewidth = 3;
+	    this.ring.type = 'ring';
+	    return this.ring.addTo(this.group).center();
 	  };
 
 	  UNENCRYPTED.prototype.evilDots = function() {
-	    var dot, i, x, y, _i, _results;
+	    var dot, i, x, y, _i, _ref, _results;
 	    _results = [];
-	    for (i = _i = 0; _i < 200; i = ++_i) {
+	    for (i = _i = 0, _ref = this.count; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
 	      dot = this.scene.makeCircle(0, 0, (Math.random() * 15) + 5);
 	      dot.fill = 'rgba(0,0,0,1)';
 	      dot.linewidth = 0;
 	      dot.opacity = Math.random();
 	      dot.type = 'evil-dot';
+	      dot.xDir = Math.random() - 0.5;
+	      dot.yDir = Math.random() - 0.5;
 	      dot.addTo(this.group).center();
 	      x = (Math.random() * (this.radius * 2)) - this.radius;
 	      y = (Math.random() * (this.radius * 2)) - this.radius;
@@ -5284,14 +5285,24 @@
 	  };
 
 	  UNENCRYPTED.prototype.update = function(frameCount, timeDelta) {
-	    var key, object, _ref;
+	    var key, object, x, y, _ref;
 	    this.stats.begin();
 	    _ref = this.group.children;
 	    for (key in _ref) {
 	      object = _ref[key];
 	      if (object.type === 'evil-dot') {
-	        object.translation.x += Math.random() - 0.5;
-	        object.translation.y += Math.random() - 0.5;
+	        x = object.translation.x;
+	        y = object.translation.y;
+	        if (x > 200 || x < -200 || y > 200 || y < -200) {
+	          object.opacity -= 0.01;
+	          if (object.opacity <= 0) {
+	            x = (Math.random() * 20) - 10;
+	            y = (Math.random() * 20) - 10;
+	            object.opacity = Math.random();
+	          }
+	        }
+	        object.translation.x = x + object.xDir;
+	        object.translation.y = y + object.yDir;
 	      }
 	    }
 	    return this.stats.end();

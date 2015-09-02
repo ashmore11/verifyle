@@ -12,6 +12,7 @@ module.exports = class UNENCRYPTED
     height    : 600
     autostart : true
 
+  count : 300
   radius: 200
 
   constructor: ->
@@ -37,18 +38,18 @@ module.exports = class UNENCRYPTED
 
   bigRing: ->
 
-    ring = @scene.makeCircle( 0, 0, @radius ).center()
+    @ring = @scene.makeCircle( 0, 0, @radius ).center()
     
-    ring.fill      = 'rgba(0,0,0,0)'
-    ring.stroke    = '#000'
-    ring.linewidth = 3
-    ring.type      = 'ring'
+    @ring.fill      = 'rgba(0,0,0,0)'
+    @ring.stroke    = '#000'
+    @ring.linewidth = 3
+    @ring.type      = 'ring'
 
-    ring.addTo( @group ).center()
+    @ring.addTo( @group ).center()
 
   evilDots: ->
 
-    for i in [0...200]
+    for i in [0...@count]
 
       dot = @scene.makeCircle( 0, 0, ( Math.random() * 15 ) + 5 )
     
@@ -56,6 +57,8 @@ module.exports = class UNENCRYPTED
       dot.linewidth = 0
       dot.opacity   = Math.random()
       dot.type      = 'evil-dot'
+      dot.xDir      = Math.random() - 0.5
+      dot.yDir      = Math.random() - 0.5
 
       dot.addTo( @group ).center()
 
@@ -72,8 +75,22 @@ module.exports = class UNENCRYPTED
 
       if object.type is 'evil-dot'
 
-        object.translation.x += Math.random() - 0.5
-        object.translation.y += Math.random() - 0.5
+        x = object.translation.x
+        y = object.translation.y
+
+        if x > 200 or x < -200 or y > 200 or y < -200
+
+          object.opacity -= 0.01
+
+          if object.opacity <= 0
+
+            x = ( Math.random() * 20 ) - 10
+            y = ( Math.random() * 20 ) - 10
+
+            object.opacity = Math.random()
+
+        object.translation.x = x + object.xDir
+        object.translation.y = y + object.yDir
 
     @stats.end()
 
