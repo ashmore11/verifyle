@@ -1,6 +1,7 @@
 module.exports =
 
+  debug       : true
   infinite    : false
-  fallSpeed   : 1
-  scaleTimer  : 2
-  sensitivity : 1000
+  fallSpeed   : 0.6
+  scaleTimer  : 4
+  sensitivity : 1500

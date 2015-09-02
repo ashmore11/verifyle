@@ -1,11 +1,9 @@
 body {
   overflow-x: hidden;
   margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #1478c2;
+  padding: 0;
+  background: linear-gradient(#1072bc, #2fa1f2);
+  min-height: 100%;
 }
 #dots {
   position: absolute;
@@ -15,6 +13,7 @@ body {
   transform: translateX(-50%);
   visibility: hidden;
   opacity: 0;
+  background: linear-gradient(#1072bc, #2fa1f2);
 }
 #encrypted {
   position: absolute;

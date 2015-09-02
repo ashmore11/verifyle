@@ -1,4 +1,6 @@
-Stats = require 'stats-js'
+Settings = require 'settings'
+Stats    = require 'utils/stats'
+dat      = require 'dat-gui'
 
 module.exports = class UNENCRYPTED
 
@@ -12,17 +14,23 @@ module.exports = class UNENCRYPTED
     height    : 600
     autostart : true
 
-  count : 300
-  radius: 200
+  count  : 200
+  radius : 200
+  shake  : false
+  pulse  : false
+
+  shakeStrength: 1
 
   constructor: ->
 
     @$el = $ '#unencrypted'
 
+    @stats = new Stats
+
     @createScene()
     @bigRing()
     @evilDots()
-    @createStats()
+    @createGUI() if Settings.debug
 
   createScene: ->
 
@@ -71,6 +79,10 @@ module.exports = class UNENCRYPTED
 
     @stats.begin()
 
+    if @pulse
+
+      @ring.scale = 0.02 * Math.sin( frameCount / 20 ) + 1
+
     for key, object of @group.children
 
       if object.type is 'evil-dot'
@@ -78,29 +90,40 @@ module.exports = class UNENCRYPTED
         x = object.translation.x
         y = object.translation.y
 
+        vx = ( Math.random() * @shakeStrength ) - ( @shakeStrength / 2 )
+        vy = ( Math.random() * @shakeStrength ) - ( @shakeStrength / 2 )
+
         if x > 200 or x < -200 or y > 200 or y < -200
 
           object.opacity -= 0.01
 
           if object.opacity <= 0
 
-            x = ( Math.random() * 20 ) - 10
-            y = ( Math.random() * 20 ) - 10
+            x = ( Math.random() * 200 ) - 100
+            y = ( Math.random() * 200 ) - 100
 
             object.opacity = Math.random()
 
         object.translation.x = x + object.xDir
         object.translation.y = y + object.yDir
 
+        if @shake
+
+          object.translation.x += vx
+          object.translation.y += vy
+
     @stats.end()
 
-  createStats: ->
+  createGUI: ->
 
-    @stats = new Stats
-    @stats.setMode( 2 )
-     
-    @stats.domElement.style.position = 'absolute'
-    @stats.domElement.style.left = '5px'
-    @stats.domElement.style.top = '5px'
-     
-    document.body.appendChild( @stats.domElement )
+    gui = new dat.GUI
+
+    shake = gui.add( @, 'shake' )
+
+    shakeStrength = gui.add( @, 'shakeStrength', 1, 10 )
+
+    shakeStrength.onChange ( change ) =>
+
+      @shakeStrength = change
+
+    pulse = gui.add( @, 'pulse' )

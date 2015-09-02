@@ -1,4 +1,4 @@
-Stats    = require 'stats-js'
+Stats    = require 'utils/stats'
 dat      = require 'dat-gui'
 settings = require 'settings'
 win      = require 'utils/window'
@@ -22,7 +22,8 @@ module.exports = class DOTS
     @createCircles()
     # @createLines()
     @createGUI()
-    @createStats()
+
+    @stats = new Stats
 
   createScene: ->
 
@@ -87,12 +88,11 @@ module.exports = class DOTS
       i++
       j = 0
 
-      tween = new TWEEN.Tween ring
-
-        .to( scale: 1.25, 1000 )
-        .delay( i * 100 )
-        .easing( TWEEN.Easing.Cubic.Out )
-        .onComplete ->
+      params =
+        scale: 1.25
+        easing: Power2.easeOut
+        delay: i * 0.1
+        onComplete: ->
 
           j++
 
@@ -102,11 +102,10 @@ module.exports = class DOTS
 
               k = 0
 
-              tween = new TWEEN.Tween ring
-
-                .to( scale: 1, 3000 )
-                .easing( TWEEN.Easing.Cubic.InOut )
-                .onComplete ->
+              params =
+                scale: 1
+                easing: Power2.easeInOut
+                onComplete: ->
 
                   k++
 
@@ -114,9 +113,9 @@ module.exports = class DOTS
 
                     circle.group.animating = false
 
-              tween.start()
+              TweenMax.to ring, 5, params
 
-      tween.start()
+      TweenMax.to ring, 1, params
 
   update: ( frameCount, timeDelta ) =>
 
@@ -169,14 +168,3 @@ module.exports = class DOTS
       for circle in @circles
 
         circle.sensitivity = change
-
-  createStats: ->
-
-    @stats = new Stats
-    @stats.setMode( 2 )
-     
-    @stats.domElement.style.position = 'absolute'
-    @stats.domElement.style.left = '5px'
-    @stats.domElement.style.top = '5px'
-     
-    document.body.appendChild( @stats.domElement )
