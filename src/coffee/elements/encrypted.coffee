@@ -11,7 +11,7 @@ module.exports = class ENCRYPTED
 
   constructor: ->
 
-    @$el = $ '#encryption'
+    @$el = $ '#encrypted'
 
     @createScene()
     @makeCircle()

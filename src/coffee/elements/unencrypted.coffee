@@ -17,7 +17,7 @@ module.exports = class UNENCRYPTED
   count  : 200
   radius : 200
   shake  : false
-  pulse  : false
+  pulse  : true
 
   shakeStrength: 1
 
