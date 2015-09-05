@@ -25,7 +25,7 @@ module.exports = class UNENCRYPTED
 
     @createScene()
     @bigRing()
-    @evilDots()
+    @smallDots()
     @update()
 
   createScene: ->
@@ -33,8 +33,8 @@ module.exports = class UNENCRYPTED
     @renderer = new PIXI.autoDetectRenderer 600, 600, @options
     @stage    = new PIXI.Container
 
-    @stage.x = 300
-    @stage.y = 300
+    @stage.x = @width / 2
+    @stage.y = @height / 2
 
     @el.append @renderer.view
 
@@ -48,30 +48,52 @@ module.exports = class UNENCRYPTED
 
     @stage.addChild object
 
-  evilDots: ->
+  smallDots: ->
+
+    @dots = new PIXI.Container
 
     for i in [0...@count]
 
-      width = ( Math.random() * 15 ) + 5
-      angle = ( i / ( @count / 2 ) ) * Math.PI
-
       object = new PIXI.Graphics
-      object.beginFill "0x000000", 1
-      object.drawCircle 0, 0, width
-      object.alpha = Math.random()
-      object.xDir  = ( Math.random() * 1 ) - 0.5
-      object.yDir  = ( Math.random() * 1 ) - 0.5
-      object.type  = 'evil-dot'
-      object.angle = angle
-      object.speed = ( Math.random() * 0.1 ) + 0.05
+      
+      object.beginFill '0x000000', 1
+      object.drawCircle 0, 0, ( Math.random() * 15 ) + 5
 
-      @stage.addChild object
-                                                
-      x = ( @radius * Math.cos( angle ) ) + ( Math.random() * 100 ) - 50
-      y = ( @radius * Math.sin( angle ) ) + ( Math.random() * 100 ) - 50
+      object.type  = 'dot'
+      object.alpha = Math.random() + 0.15
+      object.speed = 0.05
+      object.angle = ( i / ( @count / 2 ) ) * Math.PI
 
-      object.x = x
-      object.y = y
+      pos = ( ( Math.random() * 200 ) - 100 ) + 50
+      r2  = @radius / 2
+
+      object.x = ( r2 + pos ) * Math.cos( object.angle )
+      object.y = ( r2 + pos ) * Math.sin( object.angle )
+
+      @dots.addChild object
+
+    @stage.addChild @dots
+
+  animate: ->
+
+    for object in @dots.children
+
+      x = object.x
+      y = object.y
+
+      if x < 75 and x > -75 and y < 75 and y > -75
+
+        object.alpha -= 0.001
+
+        if object.alpha <= 0
+
+          x = ( @radius + 50 ) * Math.cos( object.angle )
+          y = ( @radius + 50 ) * Math.sin( object.angle )
+
+          TweenMax.to object, 3, alpha: Math.random(), ease: Power2.easeIn
+
+      object.x = x - ( object.speed * Math.cos( object.angle ) )
+      object.y = y - ( object.speed * Math.sin( object.angle ) )
 
   update: ( time ) =>
 
@@ -81,26 +103,7 @@ module.exports = class UNENCRYPTED
 
     @renderer.render @stage
 
-    for object in @stage.children
-
-      if object.type is 'evil-dot'
-
-        x = object.x
-        y = object.y
-
-        if x < 320 or x > 280 and y < 320 or y > 280
-
-          object.alpha -= 0.001
-
-          if object.alpha <= 0
-
-            x = ( @radius * Math.cos( object.angle ) ) + ( Math.random() * 100 ) - 50
-            y = ( @radius * Math.sin( object.angle ) ) + ( Math.random() * 100 ) - 50
-
-            TweenMax.to object, 5, alpha: Math.random()
-
-        object.x = x - ( object.speed * Math.cos( object.angle ) )
-        object.y = y - ( object.speed * Math.sin( object.angle ) )
+    @animate()
 
     @stats.end()
 

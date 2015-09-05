@@ -5265,15 +5265,15 @@
 	    this.stats = new Stats;
 	    this.createScene();
 	    this.bigRing();
-	    this.evilDots();
+	    this.smallDots();
 	    this.update();
 	  }
 
 	  UNENCRYPTED.prototype.createScene = function() {
 	    this.renderer = new PIXI.autoDetectRenderer(600, 600, this.options);
 	    this.stage = new PIXI.Container;
-	    this.stage.x = 300;
-	    this.stage.y = 300;
+	    this.stage.x = this.width / 2;
+	    this.stage.y = this.height / 2;
 	    return this.el.append(this.renderer.view);
 	  };
 
@@ -5287,55 +5287,56 @@
 	    return this.stage.addChild(object);
 	  };
 
-	  UNENCRYPTED.prototype.evilDots = function() {
-	    var angle, i, object, width, x, y, _i, _ref, _results;
-	    _results = [];
+	  UNENCRYPTED.prototype.smallDots = function() {
+	    var i, object, pos, r2, _i, _ref;
+	    this.dots = new PIXI.Container;
 	    for (i = _i = 0, _ref = this.count; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-	      width = (Math.random() * 15) + 5;
-	      angle = (i / (this.count / 2)) * Math.PI;
 	      object = new PIXI.Graphics;
-	      object.beginFill("0x000000", 1);
-	      object.drawCircle(0, 0, width);
-	      object.alpha = Math.random();
-	      object.xDir = (Math.random() * 1) - 0.5;
-	      object.yDir = (Math.random() * 1) - 0.5;
-	      object.type = 'evil-dot';
-	      object.angle = angle;
-	      object.speed = (Math.random() * 0.1) + 0.05;
-	      this.stage.addChild(object);
-	      x = (this.radius * Math.cos(angle)) + (Math.random() * 100) - 50;
-	      y = (this.radius * Math.sin(angle)) + (Math.random() * 100) - 50;
-	      object.x = x;
-	      _results.push(object.y = y);
+	      object.beginFill('0x000000', 1);
+	      object.drawCircle(0, 0, (Math.random() * 15) + 5);
+	      object.type = 'dot';
+	      object.alpha = Math.random() + 0.15;
+	      object.speed = 0.05;
+	      object.angle = (i / (this.count / 2)) * Math.PI;
+	      pos = ((Math.random() * 200) - 100) + 50;
+	      r2 = this.radius / 2;
+	      object.x = (r2 + pos) * Math.cos(object.angle);
+	      object.y = (r2 + pos) * Math.sin(object.angle);
+	      this.dots.addChild(object);
+	    }
+	    return this.stage.addChild(this.dots);
+	  };
+
+	  UNENCRYPTED.prototype.animate = function() {
+	    var object, x, y, _i, _len, _ref, _results;
+	    _ref = this.dots.children;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      object = _ref[_i];
+	      x = object.x;
+	      y = object.y;
+	      if (x < 75 && x > -75 && y < 75 && y > -75) {
+	        object.alpha -= 0.001;
+	        if (object.alpha <= 0) {
+	          x = (this.radius + 50) * Math.cos(object.angle);
+	          y = (this.radius + 50) * Math.sin(object.angle);
+	          TweenMax.to(object, 3, {
+	            alpha: Math.random(),
+	            ease: Power2.easeIn
+	          });
+	        }
+	      }
+	      object.x = x - (object.speed * Math.cos(object.angle));
+	      _results.push(object.y = y - (object.speed * Math.sin(object.angle)));
 	    }
 	    return _results;
 	  };
 
 	  UNENCRYPTED.prototype.update = function(time) {
-	    var object, x, y, _i, _len, _ref;
 	    requestAnimationFrame(this.update);
 	    this.stats.begin();
 	    this.renderer.render(this.stage);
-	    _ref = this.stage.children;
-	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	      object = _ref[_i];
-	      if (object.type === 'evil-dot') {
-	        x = object.x;
-	        y = object.y;
-	        if (x < 320 || x > 280 && y < 320 || y > 280) {
-	          object.alpha -= 0.001;
-	          if (object.alpha <= 0) {
-	            x = (this.radius * Math.cos(object.angle)) + (Math.random() * 100) - 50;
-	            y = (this.radius * Math.sin(object.angle)) + (Math.random() * 100) - 50;
-	            TweenMax.to(object, 5, {
-	              alpha: Math.random()
-	            });
-	          }
-	        }
-	        object.x = x - (object.speed * Math.cos(object.angle));
-	        object.y = y - (object.speed * Math.sin(object.angle));
-	      }
-	    }
+	    this.animate();
 	    return this.stats.end();
 	  };
 
