@@ -8,52 +8,46 @@ module.exports = class Circle
   y: 0
   a: 0
 
-  constructor: ( @scene, @x, @y, @radius ) ->
+  constructor: ( @stage, @x, @y, @radius ) ->
 
     @fallSpeed = Math.random() * ( @radius / 10 )
 
-    # @fallSpeed = @radius + settings.fallSpeed
+    @dot = new PIXI.Container
 
-    @group = @scene.makeGroup()
-    @group.animating = false
-
-    center           = @scene.makeCircle( 0, 0, @radius * 2 )
-    center.fill      = '#eee'
-    center.linewidth = 0
-    center.type      = 'center'
+    circle = new PIXI.Graphics
+    circle.beginFill "0xffffff", 1
+    circle.drawCircle 0.5, 0.5, @radius * 2
 
     if @radius < 3
-      center.opacity = 0.5
+      circle.alpha = 0.5
     else
-      center.opacity = 1
-
-    center.addTo @group
+      circle.alpha = 1
 
     for i in [ 5..0 ] by -1
 
       if @radius < 2
-        opacity   = 0.5
+        opacity   = 0.25
         lineWidth = 0.5
       else
         opacity   = ( Math.random() * 0.5 ) + 0.25
         lineWidth = 1.5
 
-      if i is 5 then opacity = 0.25
-
       radius = ( i * @radius ) + @radius * 3
 
-      ring           = @scene.makeCircle( 0, 0, radius )
-      ring.stroke    = '#eee'
-      ring.linewidth = lineWidth
-      ring.opacity   = opacity
-      ring.fill      = 'rgba(0,0,0,0)'
-      ring.type      = 'ring'
+      ring = new PIXI.Graphics
+      ring.beginFill "0xffffff", 0
+      ring.lineStyle lineWidth, "0xffffff", 1
+      ring.drawCircle 0, 0, radius
+      ring.alpha = if i is 5 then 0.25 else opacity
+      ring.type = 'ring'
 
-      ring.addTo @group
+      @dot.addChild ring
 
-    @group.opacity = 0.1
-    
-    @group.translation.set( @x, @y )
+    @dot.x = @x
+    @dot.y = @y
+
+    @dot.addChild circle
+    @stage.addChild @dot
 
   update: ->
 
@@ -70,9 +64,9 @@ module.exports = class Circle
       y = @y
 
     if @y > win.height - 25
-      @group.opacity -= 0.005
+      @dot.alpha -= 0.005
     else
-      @group.opacity = 1
+      @dot.alpha = 1
 
     if settings.infinite
       @x = x + ( mouse.x / settings.sensitivity ) * @radius
@@ -83,4 +77,5 @@ module.exports = class Circle
 
     @y = y + @fallSpeed
 
-    @group.translation.set( @x, @y )
+    @dot.x = @x
+    @dot.y = @y

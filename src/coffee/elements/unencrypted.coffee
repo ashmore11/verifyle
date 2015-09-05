@@ -1,129 +1,109 @@
 Settings = require 'settings'
 Stats    = require 'utils/stats'
 dat      = require 'dat-gui'
+win      = require 'utils/window'
 
 module.exports = class UNENCRYPTED
 
   scene : null
-  group : null
-  ring  : null
 
-  params:
-    type      : 'SVGRenderer'
-    width     : 600
-    height    : 600
-    autostart : true
+  width  : 600
+  height : 600
+
+  options:
+    antialias   : true
+    transparent : true
 
   count  : 200
   radius : 200
-  shake  : false
-  pulse  : true
-
-  shakeStrength: 1
 
   constructor: ->
 
-    @$el = $ '#unencrypted'
+    @el = $ '#unencrypted'
 
     @stats = new Stats
 
     @createScene()
     @bigRing()
     @evilDots()
-    @createGUI() if Settings.debug
+    @update()
 
   createScene: ->
 
-    @scene = new Two @params
-    @el    = document.getElementById 'unencrypted'
-    @group = @scene.makeGroup()
+    @renderer = new PIXI.autoDetectRenderer 600, 600, @options
+    @stage    = new PIXI.Container
 
-    @scene.appendTo( @el )
+    @stage.x = 300
+    @stage.y = 300
 
-    @scene.bind 'update', @update
-
-    @group.translation.set( @$el.width() / 2, @$el.height() / 2 )
+    @el.append @renderer.view
 
   bigRing: ->
 
-    @ring = @scene.makeCircle( 0, 0, @radius ).center()
-    
-    @ring.fill      = 'rgba(0,0,0,0)'
-    @ring.stroke    = '#000'
-    @ring.linewidth = 3
-    @ring.type      = 'ring'
+    object = new PIXI.Graphics
+    object.beginFill "0x000000", 0
+    object.lineStyle 3, "0x000000", 1
+    object.drawCircle 0, 0, @radius
+    object.alpha = 1
 
-    @ring.addTo( @group ).center()
+    @stage.addChild object
 
   evilDots: ->
 
     for i in [0...@count]
 
-      dot = @scene.makeCircle( 0, 0, ( Math.random() * 15 ) + 5 )
-    
-      dot.fill      = 'rgba(0,0,0,1)'
-      dot.linewidth = 0
-      dot.opacity   = Math.random()
-      dot.type      = 'evil-dot'
-      dot.xDir      = Math.random() - 0.5
-      dot.yDir      = Math.random() - 0.5
+      width = ( Math.random() * 15 ) + 5
+      angle = ( i / ( @count / 2 ) ) * Math.PI
 
-      dot.addTo( @group ).center()
+      object = new PIXI.Graphics
+      object.beginFill "0x000000", 1
+      object.drawCircle 0, 0, width
+      object.alpha = Math.random()
+      object.xDir  = ( Math.random() * 1 ) - 0.5
+      object.yDir  = ( Math.random() * 1 ) - 0.5
+      object.type  = 'evil-dot'
+      object.angle = angle
+      object.speed = ( Math.random() * 0.1 ) + 0.05
 
-      x = ( Math.random() * ( @radius * 2 ) ) - @radius
-      y = ( Math.random() * ( @radius * 2 ) ) - @radius 
+      @stage.addChild object
+                                                
+      x = ( @radius * Math.cos( angle ) ) + ( Math.random() * 100 ) - 50
+      y = ( @radius * Math.sin( angle ) ) + ( Math.random() * 100 ) - 50
 
-      dot.translation.set( x, y )
+      object.x = x
+      object.y = y
 
-  update: ( frameCount, timeDelta ) =>
+  update: ( time ) =>
+
+    requestAnimationFrame @update
 
     @stats.begin()
 
-    if @pulse
+    @renderer.render @stage
 
-      @ring.scale = 0.02 * Math.sin( frameCount / 20 ) + 1
-
-    for key, object of @group.children
+    for object in @stage.children
 
       if object.type is 'evil-dot'
 
-        x = object.translation.x
-        y = object.translation.y
+        x = object.x
+        y = object.y
 
-        vx = ( Math.random() * @shakeStrength ) - ( @shakeStrength / 2 )
-        vy = ( Math.random() * @shakeStrength ) - ( @shakeStrength / 2 )
+        if x < 320 or x > 280 and y < 320 or y > 280
 
-        if x > 200 or x < -200 or y > 200 or y < -200
+          object.alpha -= 0.001
 
-          object.opacity -= 0.01
+          if object.alpha <= 0
 
-          if object.opacity <= 0
+            x = ( @radius * Math.cos( object.angle ) ) + ( Math.random() * 100 ) - 50
+            y = ( @radius * Math.sin( object.angle ) ) + ( Math.random() * 100 ) - 50
 
-            x = ( Math.random() * 200 ) - 100
-            y = ( Math.random() * 200 ) - 100
+            TweenMax.to object, 5, alpha: Math.random()
 
-            object.opacity = Math.random()
-
-        object.translation.x = x + object.xDir
-        object.translation.y = y + object.yDir
-
-        if @shake
-
-          object.translation.x += vx
-          object.translation.y += vy
+        object.x = x - ( object.speed * Math.cos( object.angle ) )
+        object.y = y - ( object.speed * Math.sin( object.angle ) )
 
     @stats.end()
 
   createGUI: ->
 
     gui = new dat.GUI
-
-    shake = gui.add( @, 'shake' )
-
-    shakeStrength = gui.add( @, 'shakeStrength', 1, 10 )
-
-    shakeStrength.onChange ( change ) =>
-
-      @shakeStrength = change
-
-    pulse = gui.add( @, 'pulse' )

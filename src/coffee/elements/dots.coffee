@@ -11,11 +11,13 @@ module.exports = class DOTS
   el      : null
   circles : []
   lines   : []
-  radii   : [6,4,3,2,2,1]
+  radii   : [5,3,2,2,1,1]
 
   constructor: ->
     
     win.on 'resize', @resize
+
+    @el = $ '#dots'
 
     @createScene()
 
@@ -25,25 +27,16 @@ module.exports = class DOTS
 
     @stats = new Stats
 
+    @update()
+
   createScene: ->
 
-    types =
-      webgl  : 'WebGLRenderer'
-      svg    : 'SVGRenderer'
-      canvas : 'CanvasRenderer'
+    @renderer = new PIXI.autoDetectRenderer win.width, win.height, antialias: true, transparent: true
+    @stage    = new PIXI.Container
 
-    params = 
-      type      : types.svg
-      width     : win.width
-      height    : win.height + 100
-      autostart : true
+    @renderer.resize win.width, win.height
 
-    @scene = new Two params
-    @el    = document.getElementById 'dots'
-
-    @scene.appendTo( @el )
-
-    @scene.bind 'update', @update
+    @el.append @renderer.view
 
   createCircles: ->
 
@@ -52,7 +45,7 @@ module.exports = class DOTS
       x      = Math.random() * win.width
       y      = Math.random() * win.height
       radius = @radii[ i % 6 ]
-      circle = new Circle( @scene, x, y, radius )
+      circle = new Circle( @stage, x, y, radius )
 
       @circles.push circle
 
@@ -77,19 +70,20 @@ module.exports = class DOTS
     index  = Math.floor( Math.random() * @circles.length )
     circle = @circles[ index ]
 
-    return if circle.group.animating
+    return if circle.animating
 
-    circle.group.animating = true
+    circle.animating = true
 
     i = 0
 
-    for key, ring of circle.group.children
+    for ring in circle.dot.children
 
       i++
       j = 0
 
       params =
-        scale: 1.25
+        x: 1.25
+        y: 1.25
         easing: Power2.easeOut
         delay: i * 0.1
         onComplete: ->
@@ -98,12 +92,13 @@ module.exports = class DOTS
 
           if j is 5
 
-            for key, ring of circle.group.children
+            for ring in circle.dot.children
 
               k = 0
 
               params =
-                scale: 1
+                x: 1
+                y: 1
                 easing: Power2.easeInOut
                 onComplete: ->
 
@@ -111,30 +106,30 @@ module.exports = class DOTS
 
                   if k is 5
 
-                    circle.group.animating = false
+                    circle.animating = false
 
-              TweenMax.to ring, 5, params
+              TweenMax.to ring.scale, 5, params
 
-      TweenMax.to ring, 1, params
+      TweenMax.to ring.scale, 1, params
 
-  update: ( frameCount, timeDelta ) =>
+  update: ( time ) =>
+
+    requestAnimationFrame @update
 
     @stats.begin()
 
-    if frameCount % settings.scaleTimer is 1
-      
-      @animateScale()
+    @renderer.render @stage
     
     circle.update() for circle in @circles
     lines.update()  for lines  in @lines
 
-    TWEEN.update()
+    @animateScale() if Math.floor( time ) % settings.scaleTimer is 1
 
     @stats.end()
 
   resize: =>
 
-    @scene.width = win.width
+    @stage.width = win.width
 
   createGUI: ->
 
