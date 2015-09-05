@@ -1,120 +1,107 @@
+Stats    = require 'utils/stats'
+settings = require 'settings'
+
 module.exports = class ENCRYPTED
 
-  scene  : null
-  radius : 100
+  width  : 600
+  height : 600
 
-  params:
-    type      : 'SVGRenderer'
-    width     : 500
-    height    : 500
-    autostart : true
+  options:
+    antialias   : true
+    transparent : true
+
+  radius : 100
 
   constructor: ->
 
-    @$el = $ '#encrypted'
+    @el = $ '#encrypted'
+
+    @stats = new Stats
 
     @createScene()
     @makeCircle()
     @importShape()
 
+    @update()
+
   createScene: ->
 
-    @scene = new Two @params
-    @el    = document.getElementById 'encrypted'
+    @renderer = new PIXI.autoDetectRenderer 600, 600, @options
+    @stage    = new PIXI.Container
 
-    @scene.appendTo( @el )
+    @stage.x = @width / 2
+    @stage.y = @height / 2
 
-    @scene.bind 'update', @update
+    @el.append @renderer.view
 
   makeCircle: ->
 
-    @group = @scene.makeGroup()
-    @group.animating = false
+    @dot = new PIXI.Container
 
-    center           = @scene.makeCircle( 0, 0, @radius )
-    center.fill      = '#eee'
-    center.linewidth = 0
-    center.type      = 'center'
-
-    center.addTo @group
+    circle = new PIXI.Graphics
+    circle.beginFill "0xffffff", 1
+    circle.drawCircle 0, 0, @radius
 
     j = @radius
 
     for i in [ 5..0 ] by -1
 
-      j = j + 20
+      j = j + 24
 
-      if i is 0 or i is 2 or i is 5
-        opacity = 0.4
-      else
-        opacity = 0.8
+      ring = new PIXI.Graphics
+      ring.lineStyle 1.5, "0xffffff", 1
+      ring.drawCircle 0, 0, j
+      ring.alpha = ( Math.random() * 0.5 ) + 0.25
+      ring.type = 'ring'
 
-      ring           = @scene.makeCircle( 0, 0, j )
-      ring.stroke    = '#eee'
-      ring.linewidth = 1.5
-      ring.opacity   = opacity
-      ring.fill      = 'rgba(0,0,0,0)'
-      ring.type      = 'ring'
+      @dot.addChild ring
 
-      ring.addTo @group
-
-    @group.opacity = 1
-
-    @group.translation.set( @$el.width() / 2, @$el.height() / 2 )
-
-    i = 0
-
-    for key, object of @group.children
-
-      i++
-
-      params = 
-        rotation : 180
-        delay    : i * 100
-        ease     : Power1.easeInOut
-
-      TweenMax.to object, 5, params
+    @dot.addChild circle
+    @stage.addChild @dot
 
   importShape: ->
 
-    el = document.getElementById('assets').children[0]
+    @complexShape = new PIXI.Container
 
-    @complexShape = @scene.interpret( el ).center()
+    texture = PIXI.Texture.fromImage settings.shapePath
+    sprite  = new PIXI.Sprite texture
 
-    @complexShape.translation.set( @$el.width() / 2, @$el.height() / 2 )
+    sprite.alpha = 0.4
 
-    @complexShape.opacity = 0.8
+    sprite.x = -102
+    sprite.y = -102
 
-    @displaceVertices()
+    sprite.scale.x = 0.52
+    sprite.scale.y = 0.52
 
-  displaceVertices: ->
+    @complexShape.addChild sprite
+    @stage.addChild @complexShape
 
-    for key, child of @complexShape.children
-
-      for key, object of child.children
-
-        x = ( Math.random() * 200 ) - 100
-        y = ( Math.random() * 200 ) - 100
-
-        object.translation.x = x
-        object.translation.y = y
-        object.opacity       = 0
-
-        params = 
-          x    : 0
-          y    : 0
-          ease : Power1.easeInOut
-
-        TweenMax.to object.translation, 5, params
-
-        params = 
-          opacity : 1
-          ease    : Power1.easeInOut
-
-        TweenMax.to object, 5, params
-
-  update: ( frameCount, timeDelta ) =>
+  animate: ( time ) ->
 
     @complexShape.rotation += 0.001
     
-    @complexShape.scale = 0.02 * Math.sin( frameCount / 20 ) + 0.54
+    @complexShape.scale.x = 0.02 * Math.sin( time / 300 ) + 1
+    @complexShape.scale.y = 0.02 * Math.sin( time / 300 ) + 1
+
+    for object in @dot.children
+
+      if object.type is 'ring'
+
+        object.alpha -= 0.005
+
+        if object.alpha <= 0.1
+
+          TweenMax.to object, 3, alpha: ( Math.random() * 0.8 ) + 0.2
+
+  update: ( time ) =>
+
+    requestAnimationFrame @update
+
+    @stats.begin()
+
+    @renderer.render @stage
+
+    @animate( time )
+
+    @stats.end()

@@ -18,19 +18,32 @@ module.exports = class Circle
     circle.beginFill "0xffffff", 1
     circle.drawCircle 0.5, 0.5, @radius * 2
 
-    if @radius < 3
-      circle.alpha = 0.5
-    else
+    if @radius is 5 or @radius is 3
       circle.alpha = 1
+
+    if @radius is 2
+      circle.alpha = 0.5
+    
+    if @radius is 1
+      circle.alpha = 0.25
 
     for i in [ 5..0 ] by -1
 
-      if @radius < 2
-        opacity   = 0.25
-        lineWidth = 0.5
-      else
+      if @radius is 5
         opacity   = ( Math.random() * 0.5 ) + 0.25
         lineWidth = 1.5
+
+      if @radius is 3
+        opacity   = ( Math.random() * 0.5 ) + 0.25
+        lineWidth = 1
+
+      if @radius is 2
+        opacity   = 0.5
+        lineWidth = 1
+
+      if @radius is 1
+        opacity   = 0.25
+        lineWidth = 0.5
 
       radius = ( i * @radius ) + @radius * 3
 

@@ -23,7 +23,7 @@ module.exports = class DOTS
 
     @createCircles()
     # @createLines()
-    @createGUI()
+    # @createGUI()
 
     @stats = new Stats
 

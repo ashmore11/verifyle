@@ -5,17 +5,16 @@ win      = require 'utils/window'
 
 module.exports = class UNENCRYPTED
 
-  scene : null
-
-  width  : 600
-  height : 600
+  width  : 700
+  height : 700
 
   options:
     antialias   : true
     transparent : true
 
   count  : 200
-  radius : 200
+  radius : 250
+  speed  : 5
 
   constructor: ->
 
@@ -28,9 +27,11 @@ module.exports = class UNENCRYPTED
     @smallDots()
     @update()
 
+    # @createGUI()
+
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer 600, 600, @options
+    @renderer = new PIXI.autoDetectRenderer @width, @height, @options
     @stage    = new PIXI.Container
 
     @stage.x = @width / 2
@@ -61,10 +62,9 @@ module.exports = class UNENCRYPTED
 
       object.type  = 'dot'
       object.alpha = Math.random() + 0.15
-      object.speed = 0.05
       object.angle = ( i / ( @count / 2 ) ) * Math.PI
 
-      pos = ( ( Math.random() * 200 ) - 100 ) + 50
+      pos = ( ( Math.random() * @radius ) - @radius / 2 ) + 50
       r2  = @radius / 2
 
       object.x = ( r2 + pos ) * Math.cos( object.angle )
@@ -92,8 +92,8 @@ module.exports = class UNENCRYPTED
 
           TweenMax.to object, 3, alpha: Math.random(), ease: Power2.easeIn
 
-      object.x = x - ( object.speed * Math.cos( object.angle ) )
-      object.y = y - ( object.speed * Math.sin( object.angle ) )
+      object.x = x - ( ( @speed * 0.01 ) * Math.cos( object.angle ) )
+      object.y = y - ( ( @speed * 0.01 ) * Math.sin( object.angle ) )
 
   update: ( time ) =>
 
@@ -110,3 +110,9 @@ module.exports = class UNENCRYPTED
   createGUI: ->
 
     gui = new dat.GUI
+
+    speed = gui.add( @, 'speed', 0, 10 )
+
+    speed.onChange ( change ) =>
+
+      @speed = change
