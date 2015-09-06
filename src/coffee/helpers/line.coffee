@@ -1,31 +1,30 @@
 module.exports = class Line
 
-  origin: null
-  points: []
-  lines : []
+  constructor: ( @stage, @origin, @points ) ->
 
-  constructor: ( @scene, @origin, @points ) ->
+    @lines = new PIXI.Container
 
     for point in @points
-      
-      line = @scene.makeLine( @origin.x, @origin.y, point.x, point.y )
 
-      line.stroke  = 'rgba(255,255,255,0.5)'
-      line.opacity = 1
-      line.point   = point
+      line = new PIXI.Graphics
+      line.lineStyle 1, '0xffffff', 0.25
 
-      @lines.push line
+      line.owner = point
+
+      line.moveTo @origin.x, @origin.y
+      line.lineTo point.x, point.y
+
+      @lines.addChild line
+
+    @stage.addChild @lines
 
   update: ->
 
-    for line in @lines
+    for line in @lines.children
 
-      w2 = ( line.point.x - @origin.x ) / 2
-      h2 = ( line.point.y - @origin.y ) / 2
+      line.clear()
 
-      line.vertices[0].x = -w2
-      line.vertices[0].y = -h2
-      line.vertices[1].x = w2
-      line.vertices[1].y = h2
+      line.lineStyle 1, '0xffffff', 0.25
 
-      line.translation.set( @origin.x + w2, @origin.y + h2 )
+      line.moveTo @origin.x, @origin.y
+      line.lineTo line.owner.x, line.owner.y

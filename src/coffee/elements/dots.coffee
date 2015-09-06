@@ -13,6 +13,8 @@ module.exports = class DOTS
   lines   : []
   radii   : [5,3,2,2,1,1]
 
+  largeCircles : []
+
   constructor: ->
     
     win.on 'resize', @resize
@@ -22,7 +24,8 @@ module.exports = class DOTS
     @createScene()
 
     @createCircles()
-    # @createLines()
+    @getLargeCircles()
+    @createLines()
     # @createGUI()
 
     @stats = new Stats
@@ -49,19 +52,27 @@ module.exports = class DOTS
 
       @circles.push circle
 
+  getLargeCircles: ->
+
+    for circle in @circles
+
+      if circle.radius is 5
+
+        @largeCircles.push circle
+
   createLines: ->
 
-    for i in [0...1]
+    for i in [0...2]
 
-      origin = @circles[ Math.floor( Math.random() * @circles.length ) ]
+      origin = @largeCircles[ Math.floor( Math.random() * @largeCircles.length ) ]
       points = []
 
       for j in [0...3]
         
-        point = @circles[ Math.floor( Math.random() * @circles.length ) ]
+        point = @largeCircles[ Math.floor( Math.random() * @largeCircles.length ) ]
         points.push point
 
-      line = new Line @scene, origin, points
+      line = new Line @stage, origin, points
       
       @lines.push line
 

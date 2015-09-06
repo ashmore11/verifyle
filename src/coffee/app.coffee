@@ -6,8 +6,8 @@ class APP
 
   constructor: ->
 
-    # @dots        = new Dots
+    @dots        = new Dots
     # @encrypted   = new Encrypted
-    @unencrypted = new Unencrypted
+    # @unencrypted = new Unencrypted
 
 module.exports = new APP

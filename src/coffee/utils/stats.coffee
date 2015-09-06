@@ -24,6 +24,7 @@ module.exports = class STATS
     @stats.domElement.style.position = 'absolute'
     @stats.domElement.style.left     = '5px'
     @stats.domElement.style.top      = '5px'
+    @stats.domElement.style.zIndex   = '9999'
 
   setMode: ( mode ) ->
 
