@@ -1,4 +1,3 @@
-settings = require 'settings'
 win      = require 'utils/window'
 RAF      = require 'utils/raf'
 Circle   = require 'helpers/circle'
@@ -8,11 +7,9 @@ module.exports = class SMALLDOTS
   el      : null
   circles : []
 
-  largeCircles : []
-
   constructor: ->
 
-    @el = $ '#dots'
+    @el = $ '#small-dots'
 
     return unless @el
 
@@ -24,23 +21,23 @@ module.exports = class SMALLDOTS
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, $(document).height(), antialias: true, transparent: true
+    @renderer = new PIXI.autoDetectRenderer win.width, win.height, antialias: true, transparent: true
     @stage    = new PIXI.Container
 
     @el.append @renderer.view
 
   createCircles: ->
 
-    for i in [0...100]
+    for i in [0...30]
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
       circle = new Circle( @stage, x, y, 1 )
+
+      @circles.push circle
 
   update: ( time ) =>
 
     @renderer.render @stage
     
     circle.update() for circle in @circles
-
-    @animateScale()

@@ -73,15 +73,24 @@ module.exports = class Circle
     else
       x = @x
     
-    if @y > win.height + 50 and @radius is 5 or @radius is 3 or @radius is 2
-      y = -50 
-    else
-      y = @y
+    if @radius is 5 or @radius is 3 or @radius is 2
+      
+      if @y > win.height + 100
+        y = -50 
+      else
+        y = @y
 
-    if @y > win.height - 25 and @radius is 5 or @radius is 3 or @radius is 2
-      @dot.alpha -= 0.005
+      if @y > win.height - 25
+        @dot.alpha -= 0.005
+      else
+        @dot.alpha = 1
+
     else
-      @dot.alpha = 1
+
+      if @y > $(document).height() + 25
+        y = -50 
+      else
+        y = @y
 
     if settings.infinite
       @x = x + ( mouse.x / settings.sensitivity ) * @radius

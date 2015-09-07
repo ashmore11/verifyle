@@ -1,4 +1,5 @@
 settings = require 'settings'
+RAF      = require 'utils/raf'
 
 module.exports = class ENCRYPTED
 
@@ -21,7 +22,7 @@ module.exports = class ENCRYPTED
     @makeCircle()
     @importShape()
 
-    @update()
+    RAF.on 'update', @update
 
   createScene: ->
 
@@ -94,8 +95,6 @@ module.exports = class ENCRYPTED
           TweenMax.to object, 3, alpha: ( Math.random() * 0.8 ) + 0.2
 
   update: ( time ) =>
-
-    requestAnimationFrame @update
 
     @renderer.render @stage
 

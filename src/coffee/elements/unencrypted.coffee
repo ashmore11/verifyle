@@ -1,3 +1,5 @@
+RAF = require 'utils/raf'
+
 module.exports = class UNENCRYPTED
 
   width  : 700
@@ -21,7 +23,7 @@ module.exports = class UNENCRYPTED
     @bigRing()
     @smallDots()
 
-    @update()
+    RAF.on 'update', @update
 
   createScene: ->
 
@@ -90,8 +92,6 @@ module.exports = class UNENCRYPTED
       object.y = y - ( ( @speed * 0.01 ) * Math.sin( object.angle ) )
 
   update: ( time ) =>
-
-    requestAnimationFrame @update
 
     @renderer.render @stage
 

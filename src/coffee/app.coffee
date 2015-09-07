@@ -1,4 +1,4 @@
-Dots        = require 'elements/dots'
+LargeDots   = require 'elements/largeDots'
 SmallDots   = require 'elements/smallDots'
 Encrypted   = require 'elements/encrypted'
 Unencrypted = require 'elements/unencrypted'
@@ -7,8 +7,9 @@ class APP
 
   constructor: ->
 
-    @dots        = new Dots
-    @encrypted   = new Encrypted
-    @unencrypted = new Unencrypted
+    @largeDots        = new LargeDots
+    @smallDots   = new SmallDots
+    # @encrypted   = new Encrypted
+    # @unencrypted = new Unencrypted
 
 module.exports = new APP 

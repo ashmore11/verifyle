@@ -1,8 +1,7 @@
-settings = require 'settings'
-win      = require 'utils/window'
-RAF      = require 'utils/raf'
-Circle   = require 'helpers/circle'
-Line     = require 'helpers/line'
+win    = require 'utils/window'
+RAF    = require 'utils/raf'
+Circle = require 'helpers/circle'
+Line   = require 'helpers/line'
 
 module.exports = class DOTS
 
@@ -15,7 +14,7 @@ module.exports = class DOTS
 
   constructor: ->
 
-    @el = $ '#dots'
+    @el = $ '#large-dots'
 
     return unless @el
 
@@ -23,13 +22,12 @@ module.exports = class DOTS
 
     @createCircles()
     @getLargeCircles()
-    # @createLines()
 
     RAF.on 'update', @update
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, $(document).height(), antialias: true, transparent: true
+    @renderer = new PIXI.autoDetectRenderer win.width, win.height + 100, antialias: true, transparent: true
     @stage    = new PIXI.Container
 
     # @renderer.resize win.width, win.height
@@ -38,7 +36,7 @@ module.exports = class DOTS
 
   createCircles: ->
 
-    for i in [0...100]
+    for i in [0...60]
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
@@ -54,22 +52,6 @@ module.exports = class DOTS
       if circle.radius is 5
 
         @largeCircles.push circle
-
-  createLines: ->
-
-    for i in [0...2]
-
-      origin = @largeCircles[ Math.floor( Math.random() * @largeCircles.length ) ]
-      points = []
-
-      for j in [0...3]
-        
-        point = @largeCircles[ Math.floor( Math.random() * @largeCircles.length ) ]
-        points.push point
-
-      line = new Line @stage, origin, points
-      
-      @lines.push line
 
   animateScale: ->
 
@@ -123,6 +105,5 @@ module.exports = class DOTS
     @renderer.render @stage
     
     circle.update() for circle in @circles
-    lines.update()  for lines  in @lines
 
     @animateScale()
