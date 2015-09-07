@@ -1,1 +1,781 @@
-!function(t){function i(n){if(e[n])return e[n].exports;var r=e[n]={exports:{},id:n,loaded:!1};return t[n].call(r.exports,r,r.exports,i),r.loaded=!0,r.exports}var e={};return i.m=t,i.c=e,i.p="",i(0)}([function(t,i,e){var n,r,s,h;r=e(1),s=e(8),h=e(9),n=function(){function t(){this.dots=new r}return t}(),t.exports=new n},function(t,i,e){var n,r,s,h,a,o=function(t,i){return function(){return t.apply(i,arguments)}};h=e(2),a=e(3),n=e(5),s=e(7),t.exports=r=function(){function t(){this.update=o(this.update,this),this.el=$("#dots"),this.el&&(this.createScene(),this.createCircles(),this.getLargeCircles(),this.update())}return t.prototype.el=null,t.prototype.circles=[],t.prototype.lines=[],t.prototype.radii=[5,3,2,2,1,1],t.prototype.largeCircles=[],t.prototype.createScene=function(){return this.renderer=new PIXI.autoDetectRenderer(a.width,a.height,{antialias:!0,transparent:!0}),this.stage=new PIXI.Container,this.renderer.resize(a.width,a.height),this.el.append(this.renderer.view)},t.prototype.createCircles=function(){var t,i,e,r,s,h,o;for(o=[],i=h=0;100>h;i=++h)r=Math.random()*a.width,s=Math.random()*a.height,e=this.radii[i%6],t=new n(this.stage,r,s,e),o.push(this.circles.push(t));return o},t.prototype.getLargeCircles=function(){var t,i,e,n,r;for(n=this.circles,r=[],i=0,e=n.length;e>i;i++)t=n[i],5===t.radius?r.push(this.largeCircles.push(t)):r.push(void 0);return r},t.prototype.createLines=function(){var t,i,e,n,r,h,a,o,p;for(p=[],t=a=0;2>a;t=++a){for(n=this.largeCircles[Math.floor(Math.random()*this.largeCircles.length)],h=[],i=o=0;3>o;i=++o)r=this.largeCircles[Math.floor(Math.random()*this.largeCircles.length)],h.push(r);e=new s(this.stage,n,h),p.push(this.lines.push(e))}return p},t.prototype.animateScale=function(){var t,i,e,n,r,s,h,a,o,p;if(e=Math.floor(Math.random()*this.circles.length),t=this.circles[e],!t.animating){for(t.animating=!0,i=0,o=t.dot.children,p=[],h=0,a=o.length;a>h;h++)s=o[h],i++,n=0,r={x:1.25,y:1.25,easing:Power2.easeOut,delay:.1*i,onComplete:function(){var i,e,h,a,o;if(n++,5===n){for(a=t.dot.children,o=[],e=0,h=a.length;h>e;e++)s=a[e],i=0,r={x:1,y:1,easing:Power2.easeInOut,onComplete:function(){return i++,5===i?t.animating=!1:void 0}},o.push(TweenMax.to(s.scale,5,r));return o}}},p.push(TweenMax.to(s.scale,1,r));return p}},t.prototype.update=function(t){var i,e,n,r,s,h,a,o;for(requestAnimationFrame(this.update),this.renderer.render(this.stage),a=this.circles,n=0,s=a.length;s>n;n++)i=a[n],i.update();for(o=this.lines,r=0,h=o.length;h>r;r++)e=o[r],e.update();return this.animateScale()},t}()},function(t,i){t.exports={debug:!0,infinite:!1,fallSpeed:.6,scaleTimer:4,sensitivity:1500,shapePath:"images/shape.png"}},function(t,i,e){var n,r,s=function(t,i){return function(){return t.apply(i,arguments)}};r=e(4),n=function(){function t(){this.resize=s(this.resize,this),r(this),this.window.on("resize",this.resize),this.resize()}return t.prototype.window=$(window),t.prototype.width=0,t.prototype.height=0,t.prototype.resize=function(){return this.width=this.window.width(),this.height=this.window.height(),this.emit("resize")},t}(),t.exports=new n},function(t,i){function e(t){if(!(t&&t instanceof Function))throw new Error(t+" is not a Function")}t.exports=function(t){t=t||{};for(var i in n)t[i]=n[i];return t};var n={__init:function(t){var i=this.__listeners||(this.__listeners=[]);return i[t]||(i[t]=[])},on:function(t,i){e(i),this.__init(t).push(i)},off:function(t,i){var e=this.__init(t);e.splice(e.indexOf(i),1)},once:function(t,i){e(i);var n=this,r=function(){n.off(t,r),i.apply(this,arguments)};this.on(t,r)},emit:function(t){var i,e=this.__init(t).slice(0);for(i in e)e[i].apply(this,[].slice.call(arguments,1))}}},function(t,i,e){var n,r,s,h;s=e(2),h=e(3),r=e(6),t.exports=n=function(){function t(t,i,e,n){var r,s,h,a,o,p;for(this.stage=t,this.x=i,this.y=e,this.radius=n,this.fallSpeed=Math.random()*(this.radius/10),this.dot=new PIXI.Container,r=new PIXI.Graphics,r.beginFill("0xffffff",1),r.drawCircle(.5,.5,2*this.radius),(5===this.radius||3===this.radius)&&(r.alpha=1),2===this.radius&&(r.alpha=.5),1===this.radius&&(r.alpha=.25),s=p=5;p>=0;s=p+=-1)5===this.radius&&(a=.5*Math.random()+.25,h=1.5),3===this.radius&&(a=.5*Math.random()+.25,h=1),2===this.radius&&(a=.5,h=1),1===this.radius&&(a=.25,h=.5),n=s*this.radius+3*this.radius,o=new PIXI.Graphics,o.beginFill("0xffffff",0),o.lineStyle(h,"0xffffff",1),o.drawCircle(0,0,n),o.alpha=5===s?.25:a,o.type="ring",this.dot.addChild(o);this.dot.x=this.x,this.dot.y=this.y,this.dot.addChild(r),this.stage.addChild(this.dot)}return t.prototype.x=0,t.prototype.y=0,t.prototype.a=0,t.prototype.update=function(){var t,i,e;return i=this.x>h.width+50?-50:this.x<-50?h.width+50:this.x,e=this.y>h.height+50?-50:this.y,this.y>h.height-25?this.dot.alpha-=.005:this.dot.alpha=1,s.infinite?this.x=i+r.x/s.sensitivity*this.radius:(t=r.x/s.sensitivity,this.a+=(t-this.a)/50,this.x+=(t-this.a)*this.radius),this.y=e+this.fallSpeed,this.dot.x=this.x,this.dot.y=this.y},t}()},function(t,i,e){var n,r,s=function(t,i){return function(){return t.apply(i,arguments)}};r=e(4),n=function(){function t(){this.mousemove=s(this.mousemove,this),r(this),this.doc.on("mousemove",this.mousemove)}return t.prototype.doc=$(document),t.prototype.x=0,t.prototype.y=0,t.prototype.mousemove=function(t){return this.x=t.pageX-$(window).width()/2,this.y=t.pageY-$(window).height()/2,this.emit("move")},t}(),t.exports=new n},function(t,i){var e;t.exports=e=function(){function t(t,i,e){var n,r,s,h,a;for(this.stage=t,this.origin=i,this.points=e,this.lines=new PIXI.Container,a=this.points,s=0,h=a.length;h>s;s++)r=a[s],n=new PIXI.Graphics,n.lineStyle(1,"0xffffff",.25),n.owner=r,n.moveTo(this.origin.x,this.origin.y),n.lineTo(r.x,r.y),this.lines.addChild(n);this.stage.addChild(this.lines)}return t.prototype.update=function(){var t,i,e,n,r;for(n=this.lines.children,r=[],i=0,e=n.length;e>i;i++)t=n[i],t.clear(),t.lineStyle(1,"0xffffff",.25),t.moveTo(this.origin.x,this.origin.y),r.push(t.lineTo(t.owner.x,t.owner.y));return r},t}()},function(t,i,e){var n,r,s=function(t,i){return function(){return t.apply(i,arguments)}};r=e(2),t.exports=n=function(){function t(){this.update=s(this.update,this),this.el=$("#encrypted"),this.el&&(this.createScene(),this.makeCircle(),this.importShape(),this.update())}return t.prototype.width=600,t.prototype.height=600,t.prototype.options={antialias:!0,transparent:!0},t.prototype.radius=100,t.prototype.createScene=function(){return this.renderer=new PIXI.autoDetectRenderer(600,600,this.options),this.stage=new PIXI.Container,this.stage.x=this.width/2,this.stage.y=this.height/2,this.el.append(this.renderer.view)},t.prototype.makeCircle=function(){var t,i,e,n,r;for(this.dot=new PIXI.Container,t=new PIXI.Graphics,t.beginFill("0xffffff",1),t.drawCircle(0,0,this.radius),e=this.radius,i=r=5;r>=0;i=r+=-1)e+=24,n=new PIXI.Graphics,n.lineStyle(1.5,"0xffffff",1),n.drawCircle(0,0,e),n.alpha=.5*Math.random()+.25,n.type="ring",this.dot.addChild(n);return this.dot.addChild(t),this.stage.addChild(this.dot)},t.prototype.importShape=function(){var t,i;return this.complexShape=new PIXI.Container,i=PIXI.Texture.fromImage(r.shapePath),t=new PIXI.Sprite(i),t.alpha=.4,t.x=-102,t.y=-102,t.scale.x=.52,t.scale.y=.52,this.complexShape.addChild(t),this.stage.addChild(this.complexShape)},t.prototype.animate=function(t){var i,e,n,r,s;for(this.complexShape.rotation+=.001,this.complexShape.scale.x=.02*Math.sin(t/300)+1,this.complexShape.scale.y=.02*Math.sin(t/300)+1,r=this.dot.children,s=[],e=0,n=r.length;n>e;e++)i=r[e],"ring"===i.type?(i.alpha-=.005,i.alpha<=.1?s.push(TweenMax.to(i,3,{alpha:.8*Math.random()+.2})):s.push(void 0)):s.push(void 0);return s},t.prototype.update=function(t){return requestAnimationFrame(this.update),this.renderer.render(this.stage),this.animate(t)},t}()},function(t,i){var e,n=function(t,i){return function(){return t.apply(i,arguments)}};t.exports=e=function(){function t(){this.update=n(this.update,this),this.el=$("#unencrypted"),this.el&&(this.createScene(),this.bigRing(),this.smallDots(),this.update())}return t.prototype.width=700,t.prototype.height=700,t.prototype.options={antialias:!0,transparent:!0},t.prototype.count=200,t.prototype.radius=250,t.prototype.speed=5,t.prototype.createScene=function(){return this.renderer=new PIXI.autoDetectRenderer(this.width,this.height,this.options),this.stage=new PIXI.Container,this.stage.x=this.width/2,this.stage.y=this.height/2,this.el.append(this.renderer.view)},t.prototype.bigRing=function(){var t;return t=new PIXI.Graphics,t.beginFill("0x000000",0),t.lineStyle(3,"0x000000",1),t.drawCircle(0,0,this.radius),t.alpha=1,this.stage.addChild(t)},t.prototype.smallDots=function(){var t,i,e,n,r,s;for(this.dots=new PIXI.Container,t=r=0,s=this.count;s>=0?s>r:r>s;t=s>=0?++r:--r)i=new PIXI.Graphics,i.beginFill("0x000000",1),i.drawCircle(0,0,15*Math.random()+5),i.type="dot",i.alpha=Math.random()+.15,i.angle=t/(this.count/2)*Math.PI,e=Math.random()*this.radius-this.radius/2+50,n=this.radius/2,i.x=(n+e)*Math.cos(i.angle),i.y=(n+e)*Math.sin(i.angle),this.dots.addChild(i);return this.stage.addChild(this.dots)},t.prototype.animate=function(){var t,i,e,n,r,s,h;for(s=this.dots.children,h=[],n=0,r=s.length;r>n;n++)t=s[n],i=t.x,e=t.y,75>i&&i>-75&&75>e&&e>-75&&(t.alpha-=.001,t.alpha<=0&&(i=(this.radius+50)*Math.cos(t.angle),e=(this.radius+50)*Math.sin(t.angle),TweenMax.to(t,3,{alpha:Math.random(),ease:Power2.easeIn}))),t.x=i-.01*this.speed*Math.cos(t.angle),h.push(t.y=e-.01*this.speed*Math.sin(t.angle));return h},t.prototype.update=function(t){return requestAnimationFrame(this.update),this.renderer.render(this.stage),this.animate()},t}()}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var APP, Dots, Encrypted, Unencrypted;
+
+	Dots = __webpack_require__(1);
+
+	Encrypted = __webpack_require__(8);
+
+	Unencrypted = __webpack_require__(9);
+
+	APP = (function() {
+	  function APP() {
+	    this.dots = new Dots;
+	  }
+
+	  return APP;
+
+	})();
+
+	module.exports = new APP;
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Circle, DOTS, Line, settings, win,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	settings = __webpack_require__(2);
+
+	win = __webpack_require__(3);
+
+	Circle = __webpack_require__(5);
+
+	Line = __webpack_require__(7);
+
+	module.exports = DOTS = (function() {
+	  DOTS.prototype.el = null;
+
+	  DOTS.prototype.circles = [];
+
+	  DOTS.prototype.lines = [];
+
+	  DOTS.prototype.radii = [5, 3, 2, 2, 1, 1];
+
+	  DOTS.prototype.largeCircles = [];
+
+	  function DOTS() {
+	    this.update = __bind(this.update, this);
+	    this.el = $('#dots');
+	    if (!this.el) {
+	      return;
+	    }
+	    this.createScene();
+	    this.createCircles();
+	    this.getLargeCircles();
+	    this.update();
+	  }
+
+	  DOTS.prototype.createScene = function() {
+	    this.renderer = new PIXI.autoDetectRenderer(win.width, win.height, {
+	      antialias: true,
+	      transparent: true
+	    });
+	    this.stage = new PIXI.Container;
+	    this.renderer.resize(win.width, win.height);
+	    return this.el.append(this.renderer.view);
+	  };
+
+	  DOTS.prototype.createCircles = function() {
+	    var circle, i, radius, x, y, _i, _results;
+	    _results = [];
+	    for (i = _i = 0; _i < 100; i = ++_i) {
+	      x = Math.random() * win.width;
+	      y = Math.random() * win.height;
+	      radius = this.radii[i % 6];
+	      circle = new Circle(this.stage, x, y, radius);
+	      _results.push(this.circles.push(circle));
+	    }
+	    return _results;
+	  };
+
+	  DOTS.prototype.getLargeCircles = function() {
+	    var circle, _i, _len, _ref, _results;
+	    _ref = this.circles;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      circle = _ref[_i];
+	      if (circle.radius === 5) {
+	        _results.push(this.largeCircles.push(circle));
+	      } else {
+	        _results.push(void 0);
+	      }
+	    }
+	    return _results;
+	  };
+
+	  DOTS.prototype.createLines = function() {
+	    var i, j, line, origin, point, points, _i, _j, _results;
+	    _results = [];
+	    for (i = _i = 0; _i < 2; i = ++_i) {
+	      origin = this.largeCircles[Math.floor(Math.random() * this.largeCircles.length)];
+	      points = [];
+	      for (j = _j = 0; _j < 3; j = ++_j) {
+	        point = this.largeCircles[Math.floor(Math.random() * this.largeCircles.length)];
+	        points.push(point);
+	      }
+	      line = new Line(this.stage, origin, points);
+	      _results.push(this.lines.push(line));
+	    }
+	    return _results;
+	  };
+
+	  DOTS.prototype.animateScale = function() {
+	    var circle, i, index, j, params, ring, _i, _len, _ref, _results;
+	    index = Math.floor(Math.random() * this.circles.length);
+	    circle = this.circles[index];
+	    if (circle.animating) {
+	      return;
+	    }
+	    circle.animating = true;
+	    i = 0;
+	    _ref = circle.dot.children;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      ring = _ref[_i];
+	      i++;
+	      j = 0;
+	      params = {
+	        x: 1.25,
+	        y: 1.25,
+	        easing: Power2.easeOut,
+	        delay: i * 0.1,
+	        onComplete: function() {
+	          var k, _j, _len1, _ref1, _results1;
+	          j++;
+	          if (j === 5) {
+	            _ref1 = circle.dot.children;
+	            _results1 = [];
+	            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+	              ring = _ref1[_j];
+	              k = 0;
+	              params = {
+	                x: 1,
+	                y: 1,
+	                easing: Power2.easeInOut,
+	                onComplete: function() {
+	                  k++;
+	                  if (k === 5) {
+	                    return circle.animating = false;
+	                  }
+	                }
+	              };
+	              _results1.push(TweenMax.to(ring.scale, 5, params));
+	            }
+	            return _results1;
+	          }
+	        }
+	      };
+	      _results.push(TweenMax.to(ring.scale, 1, params));
+	    }
+	    return _results;
+	  };
+
+	  DOTS.prototype.update = function(time) {
+	    var circle, lines, _i, _j, _len, _len1, _ref, _ref1;
+	    requestAnimationFrame(this.update);
+	    this.renderer.render(this.stage);
+	    _ref = this.circles;
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      circle = _ref[_i];
+	      circle.update();
+	    }
+	    _ref1 = this.lines;
+	    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+	      lines = _ref1[_j];
+	      lines.update();
+	    }
+	    return this.animateScale();
+	  };
+
+	  return DOTS;
+
+	})();
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  debug: true,
+	  infinite: false,
+	  fallSpeed: 0.6,
+	  scaleTimer: 4,
+	  sensitivity: 1500,
+	  shapePath: 'images/shape.png'
+	};
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Window, happens,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	happens = __webpack_require__(4);
+
+	Window = (function() {
+	  Window.prototype.window = $(window);
+
+	  Window.prototype.width = 0;
+
+	  Window.prototype.height = 0;
+
+	  function Window() {
+	    this.resize = __bind(this.resize, this);
+	    happens(this);
+	    this.window.on('resize', this.resize);
+	    this.resize();
+	  }
+
+	  Window.prototype.resize = function() {
+	    this.width = this.window.width();
+	    this.height = this.window.height();
+	    return this.emit('resize');
+	  };
+
+	  return Window;
+
+	})();
+
+	module.exports = new Window;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	/**
+	 * Module constructor
+	 * @param  {Object} target Target object to extends methods and properties into
+	 * @return {Object}        Target after with extended methods and properties
+	 */
+	module.exports = function(target) {
+	  target = target || {};
+	  for(var prop in Happens)
+	    target[prop] = Happens[prop];
+	  return target;
+	};
+
+
+
+	/**
+	 * Class Happens
+	 * @type {Object}
+	 */
+	var Happens = {
+
+	  /**
+	   * Initializes event
+	   * @param  {String} event Event name to initialize
+	   * @return {Array}        Initialized event pool
+	   */
+	  __init: function(event) {
+	    var tmp = this.__listeners || (this.__listeners = []);
+	    return tmp[event] || (tmp[event] = []);
+	  },
+
+	  /**
+	   * Adds listener
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  on: function(event, fn) {
+	    validate(fn);
+	    this.__init(event).push(fn);
+	  },
+
+	  /**
+	   * Removes listener
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  off: function(event, fn) {
+	    var pool = this.__init(event);
+	    pool.splice(pool.indexOf(fn), 1);
+	  },
+
+	  /**
+	   * Add listener the fires once and auto-removes itself
+	   * @param  {String}   event Event name
+	   * @param  {Function} fn    Event handler
+	   */
+	  once: function(event, fn) {
+	    validate(fn);
+	    var self = this, wrapper = function() {
+	      self.off(event, wrapper);
+	      fn.apply(this, arguments);
+	    };
+	    this.on(event, wrapper );
+	  },
+
+	  /**
+	   * Emit some event
+	   * @param  {String} event Event name -- subsequent params after `event` will
+	   * be passed along to the event's handlers
+	   */
+	  emit: function(event /*, arg1, arg2 */ ) {
+	    var i, pool = this.__init(event).slice(0);
+	    for(i in pool)
+	      pool[i].apply(this, [].slice.call(arguments, 1));
+	  }
+	};
+
+
+
+	/**
+	 * Validates if a function exists and is an instanceof Function, and throws
+	 * an error if needed
+	 * @param  {Function} fn Function to validate
+	 */
+	function validate(fn) {
+	  if(!(fn && fn instanceof Function))
+	    throw new Error(fn + ' is not a Function');
+	}
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Circle, mouse, settings, win;
+
+	settings = __webpack_require__(2);
+
+	win = __webpack_require__(3);
+
+	mouse = __webpack_require__(6);
+
+	module.exports = Circle = (function() {
+	  Circle.prototype.x = 0;
+
+	  Circle.prototype.y = 0;
+
+	  Circle.prototype.a = 0;
+
+	  function Circle(stage, x, y, radius) {
+	    var circle, i, lineWidth, opacity, ring, _i;
+	    this.stage = stage;
+	    this.x = x;
+	    this.y = y;
+	    this.radius = radius;
+	    this.fallSpeed = Math.random() * (this.radius / 10);
+	    this.dot = new PIXI.Container;
+	    circle = new PIXI.Graphics;
+	    circle.beginFill("0xffffff", 1);
+	    circle.drawCircle(0.5, 0.5, this.radius * 2);
+	    if (this.radius === 5 || this.radius === 3) {
+	      circle.alpha = 1;
+	    }
+	    if (this.radius === 2) {
+	      circle.alpha = 0.5;
+	    }
+	    if (this.radius === 1) {
+	      circle.alpha = 0.25;
+	    }
+	    for (i = _i = 5; _i >= 0; i = _i += -1) {
+	      if (this.radius === 5) {
+	        opacity = (Math.random() * 0.5) + 0.25;
+	        lineWidth = 1.5;
+	      }
+	      if (this.radius === 3) {
+	        opacity = (Math.random() * 0.5) + 0.25;
+	        lineWidth = 1;
+	      }
+	      if (this.radius === 2) {
+	        opacity = 0.5;
+	        lineWidth = 1;
+	      }
+	      if (this.radius === 1) {
+	        opacity = 0.25;
+	        lineWidth = 0.5;
+	      }
+	      radius = (i * this.radius) + this.radius * 3;
+	      ring = new PIXI.Graphics;
+	      ring.beginFill("0xffffff", 0);
+	      ring.lineStyle(lineWidth, "0xffffff", 1);
+	      ring.drawCircle(0, 0, radius);
+	      ring.alpha = i === 5 ? 0.25 : opacity;
+	      ring.type = 'ring';
+	      this.dot.addChild(ring);
+	    }
+	    this.dot.x = this.x;
+	    this.dot.y = this.y;
+	    this.dot.addChild(circle);
+	    this.stage.addChild(this.dot);
+	  }
+
+	  Circle.prototype.update = function() {
+	    var mouseNorm, x, y;
+	    if (this.x > win.width + 50) {
+	      x = -50;
+	    } else if (this.x < -50) {
+	      x = win.width + 50;
+	    } else {
+	      x = this.x;
+	    }
+	    if (this.y > win.height + 50) {
+	      y = -50;
+	    } else {
+	      y = this.y;
+	    }
+	    if (this.y > win.height - 25) {
+	      this.dot.alpha -= 0.005;
+	    } else {
+	      this.dot.alpha = 1;
+	    }
+	    if (settings.infinite) {
+	      this.x = x + (mouse.x / settings.sensitivity) * this.radius;
+	    } else {
+	      mouseNorm = mouse.x / settings.sensitivity;
+	      this.a += (mouseNorm - this.a) / 50;
+	      this.x += (mouseNorm - this.a) * this.radius;
+	    }
+	    this.y = y + this.fallSpeed;
+	    this.dot.x = this.x;
+	    return this.dot.y = this.y;
+	  };
+
+	  return Circle;
+
+	})();
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Mouse, happens,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	happens = __webpack_require__(4);
+
+	Mouse = (function() {
+	  Mouse.prototype.doc = $(document);
+
+	  Mouse.prototype.x = 0;
+
+	  Mouse.prototype.y = 0;
+
+	  function Mouse() {
+	    this.mousemove = __bind(this.mousemove, this);
+	    happens(this);
+	    this.doc.on('mousemove', this.mousemove);
+	  }
+
+	  Mouse.prototype.mousemove = function(event) {
+	    this.x = event.pageX - ($(window).width() / 2);
+	    this.y = event.pageY - ($(window).height() / 2);
+	    return this.emit('move');
+	  };
+
+	  return Mouse;
+
+	})();
+
+	module.exports = new Mouse;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	var Line;
+
+	module.exports = Line = (function() {
+	  function Line(stage, origin, points) {
+	    var line, point, _i, _len, _ref;
+	    this.stage = stage;
+	    this.origin = origin;
+	    this.points = points;
+	    this.lines = new PIXI.Container;
+	    _ref = this.points;
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      point = _ref[_i];
+	      line = new PIXI.Graphics;
+	      line.lineStyle(1, '0xffffff', 0.25);
+	      line.owner = point;
+	      line.moveTo(this.origin.x, this.origin.y);
+	      line.lineTo(point.x, point.y);
+	      this.lines.addChild(line);
+	    }
+	    this.stage.addChild(this.lines);
+	  }
+
+	  Line.prototype.update = function() {
+	    var line, _i, _len, _ref, _results;
+	    _ref = this.lines.children;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      line = _ref[_i];
+	      line.clear();
+	      line.lineStyle(1, '0xffffff', 0.25);
+	      line.moveTo(this.origin.x, this.origin.y);
+	      _results.push(line.lineTo(line.owner.x, line.owner.y));
+	    }
+	    return _results;
+	  };
+
+	  return Line;
+
+	})();
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ENCRYPTED, settings,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	settings = __webpack_require__(2);
+
+	module.exports = ENCRYPTED = (function() {
+	  ENCRYPTED.prototype.width = 600;
+
+	  ENCRYPTED.prototype.height = 600;
+
+	  ENCRYPTED.prototype.options = {
+	    antialias: true,
+	    transparent: true
+	  };
+
+	  ENCRYPTED.prototype.radius = 100;
+
+	  function ENCRYPTED() {
+	    this.update = __bind(this.update, this);
+	    this.el = $('#encrypted');
+	    if (!this.el) {
+	      return;
+	    }
+	    this.createScene();
+	    this.makeCircle();
+	    this.importShape();
+	    this.update();
+	  }
+
+	  ENCRYPTED.prototype.createScene = function() {
+	    this.renderer = new PIXI.autoDetectRenderer(600, 600, this.options);
+	    this.stage = new PIXI.Container;
+	    this.stage.x = this.width / 2;
+	    this.stage.y = this.height / 2;
+	    return this.el.append(this.renderer.view);
+	  };
+
+	  ENCRYPTED.prototype.makeCircle = function() {
+	    var circle, i, j, ring, _i;
+	    this.dot = new PIXI.Container;
+	    circle = new PIXI.Graphics;
+	    circle.beginFill("0xffffff", 1);
+	    circle.drawCircle(0, 0, this.radius);
+	    j = this.radius;
+	    for (i = _i = 5; _i >= 0; i = _i += -1) {
+	      j = j + 24;
+	      ring = new PIXI.Graphics;
+	      ring.lineStyle(1.5, "0xffffff", 1);
+	      ring.drawCircle(0, 0, j);
+	      ring.alpha = (Math.random() * 0.5) + 0.25;
+	      ring.type = 'ring';
+	      this.dot.addChild(ring);
+	    }
+	    this.dot.addChild(circle);
+	    return this.stage.addChild(this.dot);
+	  };
+
+	  ENCRYPTED.prototype.importShape = function() {
+	    var sprite, texture;
+	    this.complexShape = new PIXI.Container;
+	    texture = PIXI.Texture.fromImage(settings.shapePath);
+	    sprite = new PIXI.Sprite(texture);
+	    sprite.alpha = 0.4;
+	    sprite.x = -102;
+	    sprite.y = -102;
+	    sprite.scale.x = 0.52;
+	    sprite.scale.y = 0.52;
+	    this.complexShape.addChild(sprite);
+	    return this.stage.addChild(this.complexShape);
+	  };
+
+	  ENCRYPTED.prototype.animate = function(time) {
+	    var object, _i, _len, _ref, _results;
+	    this.complexShape.rotation += 0.001;
+	    this.complexShape.scale.x = 0.02 * Math.sin(time / 300) + 1;
+	    this.complexShape.scale.y = 0.02 * Math.sin(time / 300) + 1;
+	    _ref = this.dot.children;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      object = _ref[_i];
+	      if (object.type === 'ring') {
+	        object.alpha -= 0.005;
+	        if (object.alpha <= 0.1) {
+	          _results.push(TweenMax.to(object, 3, {
+	            alpha: (Math.random() * 0.8) + 0.2
+	          }));
+	        } else {
+	          _results.push(void 0);
+	        }
+	      } else {
+	        _results.push(void 0);
+	      }
+	    }
+	    return _results;
+	  };
+
+	  ENCRYPTED.prototype.update = function(time) {
+	    requestAnimationFrame(this.update);
+	    this.renderer.render(this.stage);
+	    return this.animate(time);
+	  };
+
+	  return ENCRYPTED;
+
+	})();
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	var UNENCRYPTED,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	module.exports = UNENCRYPTED = (function() {
+	  UNENCRYPTED.prototype.width = 700;
+
+	  UNENCRYPTED.prototype.height = 700;
+
+	  UNENCRYPTED.prototype.options = {
+	    antialias: true,
+	    transparent: true
+	  };
+
+	  UNENCRYPTED.prototype.count = 200;
+
+	  UNENCRYPTED.prototype.radius = 250;
+
+	  UNENCRYPTED.prototype.speed = 5;
+
+	  function UNENCRYPTED() {
+	    this.update = __bind(this.update, this);
+	    this.el = $('#unencrypted');
+	    if (!this.el) {
+	      return;
+	    }
+	    this.createScene();
+	    this.bigRing();
+	    this.smallDots();
+	    this.update();
+	  }
+
+	  UNENCRYPTED.prototype.createScene = function() {
+	    this.renderer = new PIXI.autoDetectRenderer(this.width, this.height, this.options);
+	    this.stage = new PIXI.Container;
+	    this.stage.x = this.width / 2;
+	    this.stage.y = this.height / 2;
+	    return this.el.append(this.renderer.view);
+	  };
+
+	  UNENCRYPTED.prototype.bigRing = function() {
+	    var object;
+	    object = new PIXI.Graphics;
+	    object.beginFill("0x000000", 0);
+	    object.lineStyle(3, "0x000000", 1);
+	    object.drawCircle(0, 0, this.radius);
+	    object.alpha = 1;
+	    return this.stage.addChild(object);
+	  };
+
+	  UNENCRYPTED.prototype.smallDots = function() {
+	    var i, object, pos, r2, _i, _ref;
+	    this.dots = new PIXI.Container;
+	    for (i = _i = 0, _ref = this.count; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+	      object = new PIXI.Graphics;
+	      object.beginFill('0x000000', 1);
+	      object.drawCircle(0, 0, (Math.random() * 15) + 5);
+	      object.type = 'dot';
+	      object.alpha = Math.random() + 0.15;
+	      object.angle = (i / (this.count / 2)) * Math.PI;
+	      pos = ((Math.random() * this.radius) - this.radius / 2) + 50;
+	      r2 = this.radius / 2;
+	      object.x = (r2 + pos) * Math.cos(object.angle);
+	      object.y = (r2 + pos) * Math.sin(object.angle);
+	      this.dots.addChild(object);
+	    }
+	    return this.stage.addChild(this.dots);
+	  };
+
+	  UNENCRYPTED.prototype.animate = function() {
+	    var object, x, y, _i, _len, _ref, _results;
+	    _ref = this.dots.children;
+	    _results = [];
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      object = _ref[_i];
+	      x = object.x;
+	      y = object.y;
+	      if (x < 75 && x > -75 && y < 75 && y > -75) {
+	        object.alpha -= 0.001;
+	        if (object.alpha <= 0) {
+	          x = (this.radius + 50) * Math.cos(object.angle);
+	          y = (this.radius + 50) * Math.sin(object.angle);
+	          TweenMax.to(object, 3, {
+	            alpha: Math.random(),
+	            ease: Power2.easeIn
+	          });
+	        }
+	      }
+	      object.x = x - ((this.speed * 0.01) * Math.cos(object.angle));
+	      _results.push(object.y = y - ((this.speed * 0.01) * Math.sin(object.angle)));
+	    }
+	    return _results;
+	  };
+
+	  UNENCRYPTED.prototype.update = function(time) {
+	    requestAnimationFrame(this.update);
+	    this.renderer.render(this.stage);
+	    return this.animate();
+	  };
+
+	  return UNENCRYPTED;
+
+	})();
+
+
+/***/ }
+/******/ ]);
