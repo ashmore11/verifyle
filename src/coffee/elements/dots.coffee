@@ -1,5 +1,6 @@
 settings = require 'settings'
 win      = require 'utils/window'
+RAF      = require 'utils/raf'
 Circle   = require 'helpers/circle'
 Line     = require 'helpers/line'
 
@@ -8,7 +9,7 @@ module.exports = class DOTS
   el      : null
   circles : []
   lines   : []
-  radii   : [5,3,2,2,1,1]
+  radii   : [5,3,2,2]
 
   largeCircles : []
 
@@ -24,14 +25,14 @@ module.exports = class DOTS
     @getLargeCircles()
     # @createLines()
 
-    @update()
+    RAF.on 'update', @update
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, win.height, antialias: true, transparent: true
+    @renderer = new PIXI.autoDetectRenderer win.width, $(document).height(), antialias: true, transparent: true
     @stage    = new PIXI.Container
 
-    @renderer.resize win.width, win.height
+    # @renderer.resize win.width, win.height
 
     @el.append @renderer.view
 
@@ -118,8 +119,6 @@ module.exports = class DOTS
       TweenMax.to ring.scale, 1, params
 
   update: ( time ) =>
-
-    requestAnimationFrame @update
 
     @renderer.render @stage
     

@@ -29,21 +29,23 @@ module.exports = class Circle
 
     for i in [ 5..0 ] by -1
 
-      if @radius is 5
-        opacity   = ( Math.random() * 0.5 ) + 0.25
-        lineWidth = 1.5
+      switch @radius
 
-      if @radius is 3
-        opacity   = ( Math.random() * 0.5 ) + 0.25
-        lineWidth = 1
+        when 5
+          opacity   = ( Math.random() * 0.5 ) + 0.25
+          lineWidth = 1.5
 
-      if @radius is 2
-        opacity   = 0.5
-        lineWidth = 1
+        when 3
+          opacity   = ( Math.random() * 0.5 ) + 0.25
+          lineWidth = 1
 
-      if @radius is 1
-        opacity   = 0.25
-        lineWidth = 0.5
+        when 2
+          opacity   = 0.5
+          lineWidth = 1
+
+        when 1
+          opacity   = 0.25
+          lineWidth = 0.5
 
       radius = ( i * @radius ) + @radius * 3
 
@@ -71,12 +73,12 @@ module.exports = class Circle
     else
       x = @x
     
-    if @y > win.height + 50
+    if @y > win.height + 50 and @radius is 5 or @radius is 3 or @radius is 2
       y = -50 
     else
       y = @y
 
-    if @y > win.height - 25
+    if @y > win.height - 25 and @radius is 5 or @radius is 3 or @radius is 2
       @dot.alpha -= 0.005
     else
       @dot.alpha = 1

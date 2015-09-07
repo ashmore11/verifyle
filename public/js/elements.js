@@ -44,17 +44,21 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var APP, Dots, Encrypted, Unencrypted;
+	var APP, Dots, Encrypted, SmallDots, Unencrypted;
 
 	Dots = __webpack_require__(1);
 
-	Encrypted = __webpack_require__(8);
+	SmallDots = __webpack_require__(9);
 
-	Unencrypted = __webpack_require__(9);
+	Encrypted = __webpack_require__(10);
+
+	Unencrypted = __webpack_require__(11);
 
 	APP = (function() {
 	  function APP() {
 	    this.dots = new Dots;
+	    this.encrypted = new Encrypted;
+	    this.unencrypted = new Unencrypted;
 	  }
 
 	  return APP;
@@ -68,16 +72,18 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Circle, DOTS, Line, settings, win,
+	var Circle, DOTS, Line, RAF, settings, win,
 	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 	settings = __webpack_require__(2);
 
 	win = __webpack_require__(3);
 
-	Circle = __webpack_require__(5);
+	RAF = __webpack_require__(5);
 
-	Line = __webpack_require__(7);
+	Circle = __webpack_require__(6);
+
+	Line = __webpack_require__(8);
 
 	module.exports = DOTS = (function() {
 	  DOTS.prototype.el = null;
@@ -86,7 +92,7 @@
 
 	  DOTS.prototype.lines = [];
 
-	  DOTS.prototype.radii = [5, 3, 2, 2, 1, 1];
+	  DOTS.prototype.radii = [5, 3, 2, 2];
 
 	  DOTS.prototype.largeCircles = [];
 
@@ -99,16 +105,15 @@
 	    this.createScene();
 	    this.createCircles();
 	    this.getLargeCircles();
-	    this.update();
+	    RAF.on('update', this.update);
 	  }
 
 	  DOTS.prototype.createScene = function() {
-	    this.renderer = new PIXI.autoDetectRenderer(win.width, win.height, {
+	    this.renderer = new PIXI.autoDetectRenderer(win.width, $(document).height(), {
 	      antialias: true,
 	      transparent: true
 	    });
 	    this.stage = new PIXI.Container;
-	    this.renderer.resize(win.width, win.height);
 	    return this.el.append(this.renderer.view);
 	  };
 
@@ -209,7 +214,6 @@
 
 	  DOTS.prototype.update = function(time) {
 	    var circle, lines, _i, _j, _len, _len1, _ref, _ref1;
-	    requestAnimationFrame(this.update);
 	    this.renderer.render(this.stage);
 	    _ref = this.circles;
 	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -375,13 +379,41 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var RAF, happens,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	happens = __webpack_require__(4);
+
+	RAF = (function() {
+	  function RAF() {
+	    this.update = __bind(this.update, this);
+	    happens(this);
+	    this.update();
+	  }
+
+	  RAF.prototype.update = function(time) {
+	    requestAnimationFrame(this.update);
+	    return this.emit('update', time);
+	  };
+
+	  return RAF;
+
+	})();
+
+	module.exports = new RAF;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var Circle, mouse, settings, win;
 
 	settings = __webpack_require__(2);
 
 	win = __webpack_require__(3);
 
-	mouse = __webpack_require__(6);
+	mouse = __webpack_require__(7);
 
 	module.exports = Circle = (function() {
 	  Circle.prototype.x = 0;
@@ -411,21 +443,22 @@
 	      circle.alpha = 0.25;
 	    }
 	    for (i = _i = 5; _i >= 0; i = _i += -1) {
-	      if (this.radius === 5) {
-	        opacity = (Math.random() * 0.5) + 0.25;
-	        lineWidth = 1.5;
-	      }
-	      if (this.radius === 3) {
-	        opacity = (Math.random() * 0.5) + 0.25;
-	        lineWidth = 1;
-	      }
-	      if (this.radius === 2) {
-	        opacity = 0.5;
-	        lineWidth = 1;
-	      }
-	      if (this.radius === 1) {
-	        opacity = 0.25;
-	        lineWidth = 0.5;
+	      switch (this.radius) {
+	        case 5:
+	          opacity = (Math.random() * 0.5) + 0.25;
+	          lineWidth = 1.5;
+	          break;
+	        case 3:
+	          opacity = (Math.random() * 0.5) + 0.25;
+	          lineWidth = 1;
+	          break;
+	        case 2:
+	          opacity = 0.5;
+	          lineWidth = 1;
+	          break;
+	        case 1:
+	          opacity = 0.25;
+	          lineWidth = 0.5;
 	      }
 	      radius = (i * this.radius) + this.radius * 3;
 	      ring = new PIXI.Graphics;
@@ -451,12 +484,12 @@
 	    } else {
 	      x = this.x;
 	    }
-	    if (this.y > win.height + 50) {
+	    if (this.y > win.height + 50 && this.radius === 5 || this.radius === 3 || this.radius === 2) {
 	      y = -50;
 	    } else {
 	      y = this.y;
 	    }
-	    if (this.y > win.height - 25) {
+	    if (this.y > win.height - 25 && this.radius === 5 || this.radius === 3 || this.radius === 2) {
 	      this.dot.alpha -= 0.005;
 	    } else {
 	      this.dot.alpha = 1;
@@ -479,7 +512,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Mouse, happens,
@@ -514,7 +547,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	var Line;
@@ -559,7 +592,76 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Circle, RAF, SMALLDOTS, settings, win,
+	  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+	settings = __webpack_require__(2);
+
+	win = __webpack_require__(3);
+
+	RAF = __webpack_require__(5);
+
+	Circle = __webpack_require__(6);
+
+	module.exports = SMALLDOTS = (function() {
+	  SMALLDOTS.prototype.el = null;
+
+	  SMALLDOTS.prototype.circles = [];
+
+	  SMALLDOTS.prototype.largeCircles = [];
+
+	  function SMALLDOTS() {
+	    this.update = __bind(this.update, this);
+	    this.el = $('#dots');
+	    if (!this.el) {
+	      return;
+	    }
+	    this.createScene();
+	    this.createCircles();
+	    RAF.on('update', this.update);
+	  }
+
+	  SMALLDOTS.prototype.createScene = function() {
+	    this.renderer = new PIXI.autoDetectRenderer(win.width, $(document).height(), {
+	      antialias: true,
+	      transparent: true
+	    });
+	    this.stage = new PIXI.Container;
+	    return this.el.append(this.renderer.view);
+	  };
+
+	  SMALLDOTS.prototype.createCircles = function() {
+	    var circle, i, x, y, _i, _results;
+	    _results = [];
+	    for (i = _i = 0; _i < 100; i = ++_i) {
+	      x = Math.random() * win.width;
+	      y = Math.random() * win.height;
+	      _results.push(circle = new Circle(this.stage, x, y, 1));
+	    }
+	    return _results;
+	  };
+
+	  SMALLDOTS.prototype.update = function(time) {
+	    var circle, _i, _len, _ref;
+	    this.renderer.render(this.stage);
+	    _ref = this.circles;
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      circle = _ref[_i];
+	      circle.update();
+	    }
+	    return this.animateScale();
+	  };
+
+	  return SMALLDOTS;
+
+	})();
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ENCRYPTED, settings,
@@ -670,7 +772,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	var UNENCRYPTED,

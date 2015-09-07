@@ -21,13 +21,15 @@
     "gulp-if": "^1.2.5",
     "gulp-livereload": "~2.1.0",
     "gulp-minify-css": "~0.3.5",
+    "gulp-rename": "^1.2.0",
     "gulp-stylus": "^1.0.2",
     "gulp-uglify": "~0.1.0",
     "gulp-util": "~2.2.17",
     "gulp-webpack": "^1.0.0",
-    "gulp-rename": "^1.2.0",
+    "jeet": "^6.1.2",
     "nib": "^1.0.4",
     "require-dir": "^0.1.0",
+    "rupture": "^0.6.1",
     "stylus": "^0.49.2"
   }
 }

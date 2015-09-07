@@ -12,7 +12,7 @@ base_path   = process.env.PWD
 
 exports.paths =
 	source      : './src/coffee/app.coffee'
-	watch       : './src/coffee/*.coffee'
+	watch       : './src/**/*.coffee'
 	destination : './public/js/'
 	filename    : 'elements.js'
 
