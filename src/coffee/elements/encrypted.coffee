@@ -1,4 +1,3 @@
-Stats    = require 'utils/stats'
 settings = require 'settings'
 
 module.exports = class ENCRYPTED
@@ -16,7 +15,7 @@ module.exports = class ENCRYPTED
 
     @el = $ '#encrypted'
 
-    @stats = new Stats
+    return unless @el
 
     @createScene()
     @makeCircle()
@@ -98,10 +97,6 @@ module.exports = class ENCRYPTED
 
     requestAnimationFrame @update
 
-    @stats.begin()
-
     @renderer.render @stage
 
     @animate( time )
-
-    @stats.end()

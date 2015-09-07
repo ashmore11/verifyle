@@ -1,8 +1,3 @@
-Settings = require 'settings'
-Stats    = require 'utils/stats'
-dat      = require 'dat-gui'
-win      = require 'utils/window'
-
 module.exports = class UNENCRYPTED
 
   width  : 700
@@ -20,14 +15,13 @@ module.exports = class UNENCRYPTED
 
     @el = $ '#unencrypted'
 
-    @stats = new Stats
+    return unless @el
 
     @createScene()
     @bigRing()
     @smallDots()
-    @update()
 
-    # @createGUI()
+    @update()
 
   createScene: ->
 
@@ -99,20 +93,6 @@ module.exports = class UNENCRYPTED
 
     requestAnimationFrame @update
 
-    @stats.begin()
-
     @renderer.render @stage
 
     @animate()
-
-    @stats.end()
-
-  createGUI: ->
-
-    gui = new dat.GUI
-
-    speed = gui.add( @, 'speed', 0, 10 )
-
-    speed.onChange ( change ) =>
-
-      @speed = change
