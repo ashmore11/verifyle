@@ -16,8 +16,6 @@ module.exports = class DOTS
   largeCircles : []
 
   constructor: ->
-    
-    win.on 'resize', @resize
 
     @el = $ '#dots'
 
@@ -25,7 +23,7 @@ module.exports = class DOTS
 
     @createCircles()
     @getLargeCircles()
-    @createLines()
+    # @createLines()
     # @createGUI()
 
     @stats = new Stats
@@ -137,10 +135,6 @@ module.exports = class DOTS
     @animateScale() if Math.floor( time ) % settings.scaleTimer is 1
 
     @stats.end()
-
-  resize: =>
-
-    @stage.width = win.width
 
   createGUI: ->
 

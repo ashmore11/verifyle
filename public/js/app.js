@@ -97,14 +97,11 @@
 	  DOTS.prototype.largeCircles = [];
 
 	  function DOTS() {
-	    this.resize = __bind(this.resize, this);
 	    this.update = __bind(this.update, this);
-	    win.on('resize', this.resize);
 	    this.el = $('#dots');
 	    this.createScene();
 	    this.createCircles();
 	    this.getLargeCircles();
-	    this.createLines();
 	    this.stats = new Stats;
 	    this.update();
 	  }
@@ -233,10 +230,6 @@
 	      this.animateScale();
 	    }
 	    return this.stats.end();
-	  };
-
-	  DOTS.prototype.resize = function() {
-	    return this.stage.width = win.width;
 	  };
 
 	  DOTS.prototype.createGUI = function() {
