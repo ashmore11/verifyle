@@ -54,7 +54,6 @@ module.exports = class Circle
       ring.lineStyle lineWidth, "0xffffff", 1
       ring.drawCircle 0, 0, radius
       ring.alpha = if i is 5 then 0.25 else opacity
-      ring.type = 'ring'
 
       @dot.addChild ring
 
@@ -65,41 +64,22 @@ module.exports = class Circle
     @stage.addChild @dot
 
   update: ->
-
-    if @x > win.width + 50
-      x = -50 
-    else if @x < -50
-      x = win.width + 50
-    else
-      x = @x
-    
-    if @radius is 5 or @radius is 3 or @radius is 2
       
-      if @y > win.height + 100
-        y = -50 
-      else
-        y = @y
-
-      if @y > win.height - 25
-        @dot.alpha -= 0.005
-      else
-        @dot.alpha = 1
-
+    if @y > win.height + 100
+      y = -50 
     else
+      y = @y
 
-      if @y > $(document).height() + 25
-        y = -50 
-      else
-        y = @y
-
-    if settings.infinite
-      @x = x + ( mouse.x / settings.sensitivity ) * @radius
+    if @y > win.height - 25
+      @dot.alpha -= 0.005
     else
-      mouseNorm  = mouse.x / ( settings.sensitivity )
-      @a        += ( mouseNorm - @a ) / 50
-      @x        += ( mouseNorm - @a ) * @radius
+      @dot.alpha = 1
 
-    @y = y + @fallSpeed
+    mouseNorm = mouse.x / ( settings.sensitivity )
+
+    @a += ( mouseNorm - @a ) / 50
+    @x += ( mouseNorm - @a ) * @radius
+    @y  = y + @fallSpeed
 
     @dot.x = @x
     @dot.y = @y

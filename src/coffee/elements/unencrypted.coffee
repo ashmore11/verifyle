@@ -56,7 +56,6 @@ module.exports = class UNENCRYPTED
       object.beginFill '0x000000', 1
       object.drawCircle 0, 0, ( Math.random() * 15 ) + 5
 
-      object.type  = 'dot'
       object.alpha = Math.random() + 0.15
       object.angle = ( i / ( @count / 2 ) ) * Math.PI
 

@@ -7,7 +7,7 @@ class APP
 
   constructor: ->
 
-    @largeDots        = new LargeDots
+    @largeDots   = new LargeDots
     @smallDots   = new SmallDots
     # @encrypted   = new Encrypted
     # @unencrypted = new Unencrypted

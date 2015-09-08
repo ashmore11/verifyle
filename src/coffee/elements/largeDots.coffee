@@ -9,8 +9,10 @@ module.exports = class DOTS
   circles : []
   lines   : []
   radii   : [5,3,2,2]
-
-  largeCircles : []
+  
+  options :
+    antialias   : true
+    transparent : true
 
   constructor: ->
 
@@ -21,16 +23,13 @@ module.exports = class DOTS
     @createScene()
 
     @createCircles()
-    @getLargeCircles()
 
     RAF.on 'update', @update
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, win.height + 100, antialias: true, transparent: true
+    @renderer = new PIXI.autoDetectRenderer win.width, win.height + 100, @options
     @stage    = new PIXI.Container
-
-    # @renderer.resize win.width, win.height
 
     @el.append @renderer.view
 
@@ -44,14 +43,6 @@ module.exports = class DOTS
       circle = new Circle( @stage, x, y, radius )
 
       @circles.push circle
-
-  getLargeCircles: ->
-
-    for circle in @circles
-
-      if circle.radius is 5
-
-        @largeCircles.push circle
 
   animateScale: ->
 
