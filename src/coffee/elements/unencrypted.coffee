@@ -19,11 +19,6 @@ module.exports = class UNENCRYPTED
   radius : 1000
   speed  : 500
 
-  x  : 0
-  y  : 0
-  x1 : 0
-  y1 : 0
-
   constructor: ->
 
     @el = $ '#unencrypted'

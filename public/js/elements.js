@@ -791,14 +791,6 @@
 
 	  UNENCRYPTED.prototype.speed = 500;
 
-	  UNENCRYPTED.prototype.x = 0;
-
-	  UNENCRYPTED.prototype.y = 0;
-
-	  UNENCRYPTED.prototype.x1 = 0;
-
-	  UNENCRYPTED.prototype.y1 = 0;
-
 	  function UNENCRYPTED() {
 	    this.update = __bind(this.update, this);
 	    this.el = $('#unencrypted');
