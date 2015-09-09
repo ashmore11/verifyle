@@ -1,10 +1,40 @@
+@import 'nib'
+@import 'jeet'
+
 body
-#scene
-  margin: 0
-  position: absolute
-  top: 0
-  left: 0
-  width: 100%
-  height: 100%
-  overflow: hidden
-  background-color: black
+	overflow-x: hidden
+	margin: 0
+	padding: 0
+	
+#background
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	background: linear-gradient(#1072bc, #2fa1f2)
+	z-index: 1
+	
+#large-dots
+#small-dots
+	position: absolute
+	left: 50%
+	transform: translateX(-50%)
+	z-index: 1
+	
+#small-dots
+	position: fixed
+	
+#encrypted
+#unencrypted
+	position: absolute
+	top: 50%
+	left: 50%
+	transform: translate(-50%, -50%)
+	z-index: 1
+	
+img
+	position: relative
+	display: block
+	margin: 0 auto
+	z-index: 3
