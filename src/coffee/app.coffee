@@ -9,7 +9,7 @@ class APP
 
     @largeDots   = new LargeDots
     @smallDots   = new SmallDots
-    # @encrypted   = new Encrypted
-    # @unencrypted = new Unencrypted
+    @encrypted   = new Encrypted
+    @unencrypted = new Unencrypted
 
 module.exports = new APP 
