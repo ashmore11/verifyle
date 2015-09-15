@@ -21,8 +21,8 @@ module.exports = class DOTS
     return unless @el
 
     @createScene()
-
     @createCircles()
+    @createLines()
 
     RAF.on 'update', @update
 
@@ -43,6 +43,28 @@ module.exports = class DOTS
       circle = new Circle( @stage, x, y, radius )
 
       @circles.push circle
+
+  createLines: =>
+
+    origin = @circles[ 0 ]
+    points = [ @circles[ 1 ], @circles[ 2 ], @circles[ 3 ] ]
+    line   = new Line @stage, origin, points
+
+    origin = @circles[ 12 ]
+    points = [ @circles[ 15 ], @circles[ 26 ], @circles[ 57 ] ]
+    line   = new Line @stage, origin, points
+
+    # for i in [0...2]
+
+    #   origin = @circles[ Math.floor( Math.random() * @circles.length ) ]
+    #   points = []
+
+    #   for j in [0...3]
+        
+    #     point = @circles[ Math.floor( Math.random() * @circles.length ) ]
+    #     points.push point
+
+    #   line = new Line @stage, origin, points
 
   animateScale: ->
 
@@ -94,7 +116,5 @@ module.exports = class DOTS
   update: ( time ) =>
 
     @renderer.render @stage
-    
-    circle.update() for circle in @circles
 
     @animateScale()

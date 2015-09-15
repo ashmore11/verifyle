@@ -1,6 +1,7 @@
 settings = require 'settings'
 win      = require 'utils/window'
 mouse    = require 'utils/mouse'
+RAF      = require 'utils/raf'
 
 module.exports = class Circle
 
@@ -63,7 +64,9 @@ module.exports = class Circle
     @dot.addChild circle
     @stage.addChild @dot
 
-  update: ->
+    RAF.on 'update', @update
+
+  update: =>
       
     if @y > win.height + 100
       y = -50 
