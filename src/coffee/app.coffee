@@ -7,9 +7,9 @@ class APP
 
   constructor: ->
 
-    @largeDots   = new LargeDots
-    @smallDots   = new SmallDots
+    # @largeDots   = new LargeDots
+    # @smallDots   = new SmallDots
     # @encrypted   = new Encrypted
-    # @unencrypted = new Unencrypted
+    @unencrypted = new Unencrypted
 
-module.exports = new APP 
+module.exports = new APP
