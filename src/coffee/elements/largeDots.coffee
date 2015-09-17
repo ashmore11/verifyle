@@ -9,6 +9,9 @@ module.exports = class DOTS
   circles : []
   lines   : []
   radii   : [5,3,2,2]
+
+  leftCircles  : []
+  rightCircles : []
   
   options :
     antialias   : true
@@ -22,6 +25,7 @@ module.exports = class DOTS
 
     @createScene()
     @createCircles()
+    @seperateCircles()
     @createLines()
 
     RAF.on 'update', @update
@@ -39,32 +43,32 @@ module.exports = class DOTS
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
-      radius = @radii[ i % 6 ]
+      radius = @radii[ i % 4 ]
       circle = new Circle( @stage, x, y, radius )
 
       @circles.push circle
 
+  seperateCircles: ->
+
+    for circle in @circles
+
+      if circle.x < win.width / 2
+
+        @leftCircles.push circle
+
+      else
+
+        @rightCircles.push circle
+
   createLines: =>
 
-    origin = @circles[ 0 ]
-    points = [ @circles[ 1 ], @circles[ 2 ], @circles[ 3 ] ]
+    origin = @leftCircles[ 0 ]
+    points = [ @leftCircles[ 1 ], @leftCircles[ 2 ], @leftCircles[ 3 ] ]
     line   = new Line @stage, origin, points
 
-    origin = @circles[ 12 ]
-    points = [ @circles[ 15 ], @circles[ 26 ], @circles[ 57 ] ]
+    origin = @rightCircles[ 0 ]
+    points = [ @rightCircles[ 1 ], @rightCircles[ 2 ], @rightCircles[ 3 ] ]
     line   = new Line @stage, origin, points
-
-    # for i in [0...2]
-
-    #   origin = @circles[ Math.floor( Math.random() * @circles.length ) ]
-    #   points = []
-
-    #   for j in [0...3]
-        
-    #     point = @circles[ Math.floor( Math.random() * @circles.length ) ]
-    #     points.push point
-
-    #   line = new Line @stage, origin, points
 
   animateScale: ->
 

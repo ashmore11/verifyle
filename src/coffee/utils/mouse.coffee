@@ -1,4 +1,5 @@
 happens = require 'happens'
+win     = require 'utils/window'
 
 class Mouse
 
@@ -14,8 +15,8 @@ class Mouse
 
 	mousemove: ( event ) =>
 
-    @x = event.pageX - ( $(window).width() / 2 )
-    @y = event.pageY - ( $(window).height() / 2 )
+    @x = event.pageX - ( win.width  / 2 )
+    @y = event.pageY - ( win.height / 2 )
 
     @emit 'move'
 
