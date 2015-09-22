@@ -16,7 +16,7 @@ module.exports = class Circle
     @dot = new PIXI.Container
 
     circle = new PIXI.Graphics
-    circle.beginFill "0xffffff", 1
+    circle.beginFill 0xffffff, 1
     circle.drawCircle 0.5, 0.5, @radius * 2
 
     if @radius is 5 or @radius is 3
@@ -51,8 +51,8 @@ module.exports = class Circle
       radius = ( i * @radius ) + @radius * 3
 
       ring = new PIXI.Graphics
-      ring.beginFill "0xffffff", 0
-      ring.lineStyle lineWidth, "0xffffff", 1
+      ring.beginFill 0xffffff, 0
+      ring.lineStyle lineWidth, 0xffffff, 1
       ring.drawCircle 0, 0, radius
       ring.alpha = if i is 5 then 0.25 else opacity
 

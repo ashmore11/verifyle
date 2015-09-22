@@ -21,19 +21,27 @@ module.exports = class Line
 
   update: =>
 
-    for line in @lines.children
+    for line, i in @lines.children
 
       line.clear()
 
-      line.lineStyle 1, '0xffffff', 0.5
+      line.lineStyle 1, 0xffffff, 0.25
 
       if line.owner.y > win.height - ( line.owner.radius * 4 )
         
-        line.alpha -= 0.01
+        line.alpha -= 0.01 unless line.alpha <= 0
 
       if @origin.y > win.height - ( @origin.radius * 2 )
 
-        line.alpha -= 0.01
+        line.alpha -= 0.01 unless line.alpha <= 0
+
+      if line.owner.y < 0 or @origin.y < 0
+
+        params =
+          alpha : 1
+          ease  : Power2.easeInOut
+
+        TweenMax.to line, 5, params
 
       line.moveTo @origin.x, @origin.y
       line.lineTo line.owner.x, line.owner.y
