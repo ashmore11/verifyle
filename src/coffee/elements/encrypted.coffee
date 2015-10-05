@@ -1,5 +1,4 @@
-settings = require 'settings'
-RAF      = require 'utils/raf'
+RAF = require 'utils/raf'
 
 module.exports = class ENCRYPTED
 
@@ -7,8 +6,8 @@ module.exports = class ENCRYPTED
   height : 600
 
   options:
-    antialias   : true
     transparent : true
+    resolution  : 1
 
   radius : 100
 
@@ -26,7 +25,7 @@ module.exports = class ENCRYPTED
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer 600, 600, @options
+    @renderer = new PIXI.CanvasRenderer 600, 600, @options
     @stage    = new PIXI.Container
 
     @stage.x = @width / 2
@@ -63,7 +62,7 @@ module.exports = class ENCRYPTED
 
     @complexShape = new PIXI.Container
 
-    texture = PIXI.Texture.fromImage settings.shapePath
+    texture = PIXI.Texture.fromImage 'images/shape.png'
     sprite  = new PIXI.Sprite texture
 
     sprite.alpha = 0.4

@@ -4,8 +4,11 @@ Circle   = require 'helpers/circle'
 
 module.exports = class SMALLDOTS
 
-  el      : null
-  circles : []
+  options :
+    resolution  : 1
+    transparent : true
+
+  el: null
 
   constructor: ->
 
@@ -21,7 +24,7 @@ module.exports = class SMALLDOTS
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, win.height, antialias: true, transparent: true
+    @renderer = new PIXI.CanvasRenderer win.width, win.height, @options
     @stage    = new PIXI.Container
 
     @el.append @renderer.view
@@ -30,14 +33,11 @@ module.exports = class SMALLDOTS
 
     for i in [0...30]
       
-      x      = Math.random() * win.width
-      y      = Math.random() * win.height
-      circle = new Circle( @stage, x, y, 1 )
+      x = Math.random() * win.width
+      y = Math.random() * win.height
 
-      @circles.push circle
+      circle = new Circle( @stage, x, y, 1 )
 
   update: ( time ) =>
 
     @renderer.render @stage
-    
-    circle.update() for circle in @circles

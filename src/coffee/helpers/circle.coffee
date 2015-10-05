@@ -2,6 +2,7 @@ settings = require 'settings'
 win      = require 'utils/window'
 mouse    = require 'utils/mouse'
 RAF      = require 'utils/raf'
+Stats    = require 
 
 module.exports = class Circle
 
@@ -17,7 +18,7 @@ module.exports = class Circle
 
     circle = new PIXI.Graphics
     circle.beginFill 0xffffff, 1
-    circle.drawCircle 0.5, 0.5, @radius * 2
+    circle.drawCircle 0, 0, @radius * 2
 
     if @radius is 5 or @radius is 3
       circle.alpha = 1
@@ -78,11 +79,14 @@ module.exports = class Circle
     else
       @dot.alpha = 1
 
-    mouseNorm = mouse.x / ( settings.sensitivity )
-
-    @a += ( mouseNorm - @a ) / 50
-    @x += ( mouseNorm - @a ) * @radius
-    @y  = y + @fallSpeed
-
-    @dot.x = @x
     @dot.y = @y
+
+    if @radius > 0
+
+      mouseNorm = mouse.x / ( settings.sensitivity )
+
+      @a += ( mouseNorm - @a ) / 50
+      @x += ( mouseNorm - @a ) * @radius
+      @y  = y + @fallSpeed
+
+      @dot.x = @x

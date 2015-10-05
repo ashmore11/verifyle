@@ -14,7 +14,7 @@ module.exports = class DOTS
   rightCircles : []
   
   options :
-    antialias   : true
+    resolution  : 1
     transparent : true
 
   constructor: ->
@@ -32,14 +32,14 @@ module.exports = class DOTS
 
   createScene: ->
 
-    @renderer = new PIXI.autoDetectRenderer win.width, win.height + 100, @options
+    @renderer = new PIXI.CanvasRenderer win.width, win.height + 100, @options
     @stage    = new PIXI.Container
 
     @el.append @renderer.view
 
   createCircles: ->
 
-    for i in [0...60]
+    for i in [0...50]
       
       x      = Math.random() * win.width
       y      = Math.random() * win.height
